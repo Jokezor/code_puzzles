@@ -1,0 +1,98 @@
+1648630656202	geckodriver	INFO	Listening on 127.0.0.1:60029
+1648630656213	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "45115" "-no-remote" "-profile" "/tmp/rust_mozprofileFHDe06"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1648630656723	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileFHDe06/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:45115/devtools/browser/72642e9f-637b-47b9-8251-cc3b728c3fec
+1648630657737	Marionette	INFO	Listening on port 39119
+1648630657835	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[Child 67738, MediaDecoderStateMachine #1] WARNING: Decoder=7fd5dfa55400 state=DECODING_METADATA Decode metadata failed, shutting down decoder: file /build/firefox/src/firefox-98.0.2/dom/media/MediaDecoderStateMachine.cpp:367
+[Child 67738, MediaDecoderStateMachine #1] WARNING: Decoder=7fd5dfa55400 Decode error: NS_ERROR_DOM_MEDIA_METADATA_ERR (0x806e0006): file /build/firefox/src/firefox-98.0.2/dom/media/MediaDecoderStateMachine.cpp:3568
+1648630687137	Marionette	INFO	Stopped listening on port 39119
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+1648630690545	geckodriver	INFO	Listening on 127.0.0.1:50029
+1648630690547	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "40397" "-no-remote" "-profile" "/tmp/rust_mozprofile1f97FW"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1648630690851	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofile1f97FW/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:40397/devtools/browser/87aeaf1a-719d-4a34-81c3-1ed95724d8bb
+1648630691567	Marionette	INFO	Listening on port 33241
+1648630691661	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1648630699759	geckodriver	INFO	Listening on 127.0.0.1:53609
+1648630699762	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "41161" "-no-remote" "-profile" "/tmp/rust_mozprofilekg4pXS"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1648630700097	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofilekg4pXS/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:41161/devtools/browser/12c900e7-7269-4caa-9dae-802864ac130a
+1648630700861	Marionette	INFO	Listening on port 42105
+1648630700876	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[Child 68329, MediaDecoderStateMachine #1] WARNING: Decoder=7f2a1aee4d00 state=DECODING_METADATA Decode metadata failed, shutting down decoder: file /build/firefox/src/firefox-98.0.2/dom/media/MediaDecoderStateMachine.cpp:367
+[Child 68329, MediaDecoderStateMachine #1] WARNING: Decoder=7f2a1aee4d00 Decode error: NS_ERROR_DOM_MEDIA_METADATA_ERR (0x806e0006): file /build/firefox/src/firefox-98.0.2/dom/media/MediaDecoderStateMachine.cpp:3568
+1648630709970	Marionette	INFO	Stopped listening on port 33241
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1648630710954	Marionette	INFO	Stopped listening on port 42105
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1648631341834	geckodriver	INFO	Listening on 127.0.0.1:51971
+1648631341837	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "51931" "-no-remote" "-profile" "/tmp/rust_mozprofileLDVdmf"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1648631342158	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileLDVdmf/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:51931/devtools/browser/1de4534d-bd6a-4831-bc77-c192ebce2fb1
+1648631343033	Marionette	INFO	Listening on port 37377
+1648631343049	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[Child 69433, MediaDecoderStateMachine #1] WARNING: Decoder=7fc9d943c900 state=DECODING_METADATA Decode metadata failed, shutting down decoder: file /build/firefox/src/firefox-98.0.2/dom/media/MediaDecoderStateMachine.cpp:367
+[Child 69433, MediaDecoderStateMachine #1] WARNING: Decoder=7fc9d943c900 Decode error: NS_ERROR_DOM_MEDIA_METADATA_ERR (0x806e0006): file /build/firefox/src/firefox-98.0.2/dom/media/MediaDecoderStateMachine.cpp:3568
+1648631350707	Marionette	INFO	Stopped listening on port 37377
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1648631532274	geckodriver	INFO	Listening on 127.0.0.1:34251
+1648631532276	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "56025" "-no-remote" "-profile" "/tmp/rust_mozprofile0TCMhe"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1648631532597	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofile0TCMhe/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:56025/devtools/browser/f100cd3f-65a5-44f4-9524-6683a7ab1943
+1648631533328	Marionette	INFO	Listening on port 46697
+1648631533393	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[Child 69885, MediaDecoderStateMachine #1] WARNING: Decoder=7f4a3103fa00 state=DECODING_METADATA Decode metadata failed, shutting down decoder: file /build/firefox/src/firefox-98.0.2/dom/media/MediaDecoderStateMachine.cpp:367
+[Child 69885, MediaDecoderStateMachine #1] WARNING: Decoder=7f4a3103fa00 Decode error: NS_ERROR_DOM_MEDIA_METADATA_ERR (0x806e0006): file /build/firefox/src/firefox-98.0.2/dom/media/MediaDecoderStateMachine.cpp:3568
+1648631558026	Marionette	INFO	Stopped listening on port 46697
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1648631727671	geckodriver	INFO	Listening on 127.0.0.1:38211
+1648631727674	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "41449" "-no-remote" "-profile" "/tmp/rust_mozprofileodAbiE"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1648631727978	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileodAbiE/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:41449/devtools/browser/dc355906-33f3-48e5-b582-c73acf090d34
+1648631728800	Marionette	INFO	Listening on port 41609
+1648631728886	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1648631738294	Marionette	INFO	Stopped listening on port 41609
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
+1648631740653	geckodriver	INFO	Listening on 127.0.0.1:35443
+1648631740655	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "53323" "-no-remote" "-profile" "/tmp/rust_mozprofile1RCvzp"
+ATTENTION: default value of option mesa_glthread overridden by environment.
+1648631740975	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofile1RCvzp/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:53323/devtools/browser/c7d176b1-adec-4de7-858b-86526c57b6b8
+1648631741789	Marionette	INFO	Listening on port 46457
+1648631741868	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[Child 70741, MediaDecoderStateMachine #1] WARNING: Decoder=7f020c9e2d00 state=DECODING_METADATA Decode metadata failed, shutting down decoder: file /build/firefox/src/firefox-98.0.2/dom/media/MediaDecoderStateMachine.cpp:367
+[Child 70741, MediaDecoderStateMachine #1] WARNING: Decoder=7f020c9e2d00 Decode error: NS_ERROR_DOM_MEDIA_METADATA_ERR (0x806e0006): file /build/firefox/src/firefox-98.0.2/dom/media/MediaDecoderStateMachine.cpp:3568
+1648631747076	Marionette	INFO	Stopped listening on port 46457
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+
+###!!! [Parent][PImageBridgeParent] Error: RunMessage(msgname=PImageBridge::Msg_WillClose) Channel closing: too late to send/recv, messages will be lost
+
