@@ -26,23 +26,28 @@ void solution(void) {
   while (i <= n) {
     int top = (-1) * pq.top();
     if (pq.empty()) {
-      top = -50000;
+      top = 5000000;
     } else {
       pq.pop();
     }
-    if (i < top) {
+    while (i < top) {
       // Check here if there are more that will be sad
       // Essentially, pop if there are any matching.
       // Then we need to increase i by more than 1
       // And if it is not the same, then push it back.
-      i++;
-      while (pq.empty() == false && ((-1) * pq.top()) == top) {
-        pq.pop();
+      if (pq.empty() == false) {
+        top = (-1) * pq.top();
+      } else {
+        top = 5000000;
       }
-      result++;
-    } else {
+      pq.pop();
       i++;
+
+      if (i >= top) {
+        result++;
+      }
     }
+    i++;
   }
 
   printf("%d\n", result);
