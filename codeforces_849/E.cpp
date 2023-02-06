@@ -21,17 +21,9 @@ void solution() {
     a.push_back(buf);
     if (buf <= 0) {
       num_negative_numbers++;
-      result += -1 * buf;
-
-      if (-1 * buf < smallest) {
-        smallest = -1 * buf;
-      }
-    } else {
-      result += buf;
-      if (buf < smallest) {
-        smallest = buf;
-      }
     }
+    result += abs(buf);
+    smallest = min(smallest, abs(buf));
   }
 
   if (num_negative_numbers % 2 == 0) {
