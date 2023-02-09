@@ -18,7 +18,7 @@ void solution() {
     cin >> x;
     a.push_back({x + min(i + 1, n - i), x + i + 1});
   }
-  // Sort the array of costs.
+  // Sort the array of costs, assures that the cheapest teleports are first.
   sort(a.begin(), a.end());
 
   // Make a prefix_sum
@@ -50,6 +50,8 @@ void solution() {
       // We can thus take the most optimal path, since we can use both
       // left and right.
       if (mid > i) {
+        // Deduct the cost of getting to the mid teleport since we have already
+        // counted it in the prefix sum.
         price -= a[i].first;
         now--;
       }
@@ -67,7 +69,7 @@ void solution() {
     // mx is actually taken from the index.
     ans = max(ans, mx);
   }
-  cout << ans << endl;
+  cout << ans << "\n";
 }
 
 int32_t main() {
