@@ -16,8 +16,7 @@ void solution() {
 
   // Add the minimum cost to buy the whole group of potatoes
   // It costs m with a but m+1 for b due to the promotion.
-  result =
-      min(promotions_available * m * a, promotions_available * (m + 1) * b);
+  result = min(m * a, (m + 1) * b) * promotions_available;
   // Finally, add the cost of the singles.
   result += min(singles * a, singles * b);
 
