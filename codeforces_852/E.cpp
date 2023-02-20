@@ -6,26 +6,12 @@ void solution() {
   // maximum satisfied readers during each year.
   // The minimum a_i should always take a book first
   // Thinking of doing some DSU with connected components
-  // Connect pairs with a_i.
-  // Start with 1. All members of the set with 1 takes
-  // the books first.
-  // Then the members with 2 etc.
-  // But if we in the end notice books left,
-  // Then we need to backtrack and take more books.
-  // Maybe that can be done with some binary search?
-  //
-  // Not necessarily! What if we start with assigning each user a book?
-  // Then we can happily continue with the approach I had in mind greedily.
-  //
-  // So start with making connected components of books
-  //
-  // The number of satisfied customers starts with the number of customers in
   // the connected set with only 1 book as requirement. The number of books to
   // subtract is (group_cost - 1) * group_size. Where -1 is for the starting
   // value of taking 1 book to each person.
   //
   // Then I just need to build DSU in c++ and it should be done!
-  int n, q, ans;
+  int n, q;
 
   cin >> n;
 
@@ -34,42 +20,44 @@ void solution() {
     cin >> a[i];
   }
 
-  multiset<int> groups;
+  vector<int> groups(n, 0);
 
   for (int i = 0; i < n; i++) {
-    groups.insert(a[i]);
+    groups[a[i]]++;
   }
   // Actually, could just make a hashmap from cost to an int containing how many
   // are in that group.
   //
   cin >> q;
 
-  for (int i = 0; i < q; q++) {
+  for (int i = 0; i < q; i++) {
     int ans = 0;
     // Just check the set here.
     int k;
     cin >> k;
 
     // Take away 1 book for each reader.
+    // Not from k! but the total books needed to satisfy all.
     k -= n;
 
     for (int j = 1; j <= n; j++) {
       // Need to check how many readers of the group can be fulfilled.
-      // Can actually just use a simple vector instead.
-      k -= (j - 1) * groups.count(j);
+      int num_satisified = min(groups[j], k / max((j - 1), 1));
+      k -= (j - 1) * num_satisified;
+      ans += num_satisified;
+      cout << j << groups[j] << endl;
+      cout << k << endl;
 
       if (k <= 0) {
         break;
-      } else {
-        ans += groups.count(j);
       }
     }
+    // cout << ans << endl;
   }
 }
 
 int32_t main() {
-  int t;
-  cin >> t;
+  int t = 1;
   while (t--)
     solution();
 }
