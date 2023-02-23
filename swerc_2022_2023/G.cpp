@@ -3,7 +3,7 @@
 using namespace std;
 
 void solution() {
-  int n, x = 0;
+  int n;
   string s;
 
   cin >> n;
@@ -16,74 +16,22 @@ void solution() {
   // Find x such that the valid intervals are met and
   // each critic taste exactly x white wines
 
-  // How can we prove that an interval exist?
-  // Well it does not say that all wines needs to be tasted.
-  // Also x does not need to be minimized or maximized.
-  // I would think to start greedily, assign one pointer to the left
-  // and one to the right.
-  // First we need at least n wines.
-  // Then the next critic takes n+1 wines until the next wine is W.
-  // If it is, then we need to increment left until left < right contains
-  // the same number of W.
-  // If we have smaller than n now, then increment right until n and left <
-  // right contains the same number of W. If right > 2n -1, then this max_W was
-  // set to a wrong value.
-  //
-  // This solution would iterate through i < count_W
-  // Then for each critique n, it would go 2*n -1
-  // since we use a two pointer solution.
-  //
-  // O((2*n -1)*(2*n -1)) = O(n^2)
-  //
-  // Still O(n^2) since all wines might be white.
-  // Implement this and see how it goes.
-  int W_count = 0;
-  vector<ll> prefix_sum(2 * n);
-  prefix_sum[0] = 0;
+  // Actually, if we find the maximum x for any n length interval, then that
+  // interval can be repeated n-1 times. For example, if you were to find an
+  // interval of wines not including another W it's valid. If you found another
+  // W > x, then the length is greater than n. Decrease the wines added until
+  // you have x. This can be done since there are 2n - 1 bottles of wine.
+
+  vector<ll> prefix_sum(2 * n, 0);
 
   // Get the number of whites
-  for (int i = 1; i <= 2 * n - 1; i++) {
-    if (s[i - 1] == 'W') {
-      W_count++;
-      prefix_sum[i - 1]++;
-    }
-    prefix_sum[i] += prefix_sum[i - 1];
+  for (int i = 0; i < 2 * n - 1; i++) {
+    prefix_sum[i + 1] = prefix_sum[i] + (s[i] == 'W');
   }
 
-  // Go through all assortments, trying with 0 whites first.
-  for (int w = 0; w < W_count; w++) {
-    int left = 1;
-    int right = n;
-    int num_critics = 0;
-    while (left <= right && right < 2 * n) {
-      // First check so we have n in length
-      if (right - left < n) {
-        right++;
-      }
-
-      // The critic takes the wines between left and right until i W seen.
-      // Feels like this can be stored and searched in a range query
-      // If we store the indices of how many whites seen as prefix_sum
-      // Then the number here is white_wines[right] - white_wines[left]
-      ll whites_found = prefix_sum[right] - prefix_sum[left];
-
-      if (whites_found == w) {
-        num_critics++;
-        right++;
-        cout << "[" << left << ", " << right << "]" << endl;
-      } else if (whites_found < w) {
-        right++;
-      } else if (whites_found > w) {
-        left++;
-      }
-
-      cout << w << " " << num_critics << endl;
-    }
-    // Found a matching arrangement
-    if (num_critics == n) {
-      x = w;
-      break;
-    }
+  ll x = 0;
+  for (int i = 0; i < n; i++) {
+    x = max(x, prefix_sum[i + n] - prefix_sum[i]);
   }
 
   cout << x << endl;
