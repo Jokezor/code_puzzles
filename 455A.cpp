@@ -21,6 +21,7 @@ int solution() {
   dp[0] = 0;
   dp[1] = a[1];
 
+  // Either take the previous or the current and the one before the last one.
   for (ll i = 2; i < N; i++) {
     dp[i] = max(dp[i - 1], dp[i - 2] + a[i] * i);
   }
