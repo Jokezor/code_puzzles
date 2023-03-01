@@ -4,57 +4,40 @@
 
 using namespace std;
 
-bool sortpair(const tuple<int, int, int> &p1, const tuple<int, int, int> &p2) {
-  if (get<0>(p1) == 0 || get<0>(p2) == 0 || get<1>(p1) == 0 ||
-      get<1>(p2) == 0) {
-    return false;
-  }
-  if (get<0>(p1) < get<0>(p2)) {
-    return true;
-    // return (get<0>(p1) < get<1>(p2));
-  } else {
-    return false;
-    // return (get<0>(p2) < get<1>(p1));
-  }
-}
+int bfs(vector<vector<pair<int, int>>> tree, pair<int, int> r, int m) {
 
-int dfs(vector<vector<pair<int, int>>> tree, set<int> &visited,
-        pair<int, int> root, int cats, int maxCats, int m) {
-
+  set<int> visited;
   int ans = 0;
+  deque<tuple<int, int, int>> q;
 
-  // Take the first element
-  // Increment ans if we reach a leaf with not cats reached m
-  if (maxCats > m) {
-    return ans;
-  }
+  // Add to the queue
+  q.push_back({r.first, r.second, r.second});
 
-  // This is a leaf, increment ans.
-  for (auto child : tree[root.first]) {
-    if (visited.find(child.first) == visited.end()) {
-      visited.insert(child.first);
-      int new_ans = 0;
-      cout << child.first << endl;
-      // Only count consecutive cats.
-      // If there is a cat, then increase.
-      if (child.second) {
-        new_ans = dfs(tree, visited, child, cats + child.second,
-                      max(maxCats, cats + child.second), m);
-      } else {
-        new_ans = dfs(tree, visited, child, 0, maxCats, m);
+  // Pop it like its hot
+  while (!q.empty()) {
+    tuple<int, int, int> root = q.front();
+    q.pop_front();
+
+    visited.insert(get<0>(root));
+
+    if (tree[get<0>(root)].size() <= 1 && get<0>(root) != 1) {
+      if (get<2>(root) <= m && get<1>(root) <= m) {
+        ans++;
       }
-      ans += new_ans;
-    }
-  }
-
-  cout << root.first << ":" << maxCats << endl;
-
-  // This does not work if adding the path from both directions.
-  if (tree[root.first].empty()) {
-    if (maxCats <= m) {
-      return 1;
     } else {
-      return 0;
+      for (auto child : tree[get<0>(root)]) {
+        if (visited.find(child.first) == visited.end()) {
+          visited.insert(child.first);
+          // Max consecutive in 3rd
+          // Current consecutive in 2nd
+          if (child.second) {
+            q.push_back({child.first, get<1>(root) + child.second,
+                         max(get<2>(root), get<1>(root) + child.second)});
+          } else {
+            q.push_back({child.first, 0, get<2>(root)});
+          }
+        }
+      }
     }
   }
 
@@ -72,50 +55,17 @@ int solution() {
   }
 
   // Build the tree
-  // First sort both and take the smallest to the biggest.
-  vector<tuple<int, int, int>> xy(2 * n - 2);
-
   vector<vector<pair<int, int>>> T(n + 1);
 
-  for (int i = 0; i < n - 1; i++) {
+  for (int i = 1; i < n; i++) {
     int x, y;
     cin >> x >> y;
-    tuple<int, int, int> element = {x, y, a[i + 1]};
-    xy[i] = element;
-
-    tuple<int, int, int> reverse_element = {y, x, a[i + 1]};
-    xy[i + n - 1] = reverse_element;
+    T[y].push_back({x, a[i]});
+    T[x].push_back({y, a[i]});
   }
 
-  sort(xy.begin(), xy.end(), sortpair);
-
-  set<int> pushed;
-
-  for (int i = 0; i < 2 * n - 1; i++) {
-    tuple<int, int, int> element = xy[i];
-    if (get<0>(element) != 0 && pushed.find(get<0>(element)) == pushed.end() &&
-        pushed.find(get<1>(element)) == pushed.end()) {
-      T[min(get<0>(element), get<1>(element))].push_back(
-          {max(get<0>(element), get<1>(element)), get<2>(element)});
-    }
-    cout << get<0>(element) << get<1>(element) << get<2>(element) << endl;
-  }
-  cout << "boo" << endl;
-
-  /*
-  for (int i = 0; i < n; i++) {
-    cout << "children for: " << i << endl;
-    for (auto t : T[i]) {
-      cout << t.first << " ";
-    }
-    cout << endl;
-  }
-  */
-
-  set<int> visited;
-
-  // Start the DFS search from 1
-  int ans = dfs(T, visited, {1, a[0]}, a[0], a[0], m);
+  // Start the BFS search from 1
+  int ans = bfs(T, {1, a[0]}, m);
 
   cout << ans << endl;
 
