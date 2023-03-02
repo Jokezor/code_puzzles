@@ -4,77 +4,56 @@
 
 using namespace std;
 
-int bfs(vector<vector<pair<int, int>>> tree, pair<int, int> r, int m) {
+vector<vector<int>> tree(1000000);
+vector<int> a(1000000);
 
-  set<int> visited;
-  int ans = 0;
-  deque<tuple<int, int, int>> q;
+void dfs(int root, int parent, int cats, ll m, int &ans) {
 
-  // Add to the queue
-  q.push_back({r.first, r.second, r.second});
+  if (cats > m) {
+    return;
+  }
 
-  // Pop it like its hot
-  while (!q.empty()) {
-    tuple<int, int, int> root = q.front();
-    q.pop_front();
+  int ok = 1;
 
-    visited.insert(get<0>(root));
+  for (int i = 0; i < tree[root].size(); i++) {
+    int child = tree[root][i];
 
-    if (tree[get<0>(root)].size() <= 1 && get<0>(root) != 1) {
-      if (get<2>(root) <= m && get<1>(root) <= m) {
-        ans++;
-      }
-    } else {
-      for (auto child : tree[get<0>(root)]) {
-        if (visited.find(child.first) == visited.end()) {
-          visited.insert(child.first);
-          // Max consecutive in 3rd
-          // Current consecutive in 2nd
-          if (child.second) {
-            q.push_back({child.first, get<1>(root) + child.second,
-                         max(get<2>(root), get<1>(root) + child.second)});
-          } else {
-            q.push_back({child.first, 0, get<2>(root)});
-          }
-        }
-      }
+    // This means we are not a leaf.
+    if (child != parent) {
+      ok = 0;
+      // cats * a[child] + a[child] is basically a way to keep the cats
+      // since a[child] is 1/0.
+      dfs(child, root, cats * a[child] + a[child], m, ans);
     }
   }
 
-  return ans;
+  ans += ok;
 }
 
 int solution() {
-  int n, m;
+  ll n, m;
 
   cin >> n >> m;
 
-  vector<int> a(n);
   for (int i = 0; i < n; i++) {
     cin >> a[i];
   }
 
-  // Build the tree
-  vector<vector<pair<int, int>>> T(n + 1);
-
   for (int i = 1; i < n; i++) {
     int x, y;
     cin >> x >> y;
-    T[y].push_back({x, a[i]});
-    T[x].push_back({y, a[i]});
+    x--;
+    y--;
+    tree[x].push_back(y);
+    tree[y].push_back(x);
   }
 
-  // Start the BFS search from 1
-  int ans = bfs(T, {1, a[0]}, m);
+  int ans = 0;
+
+  // Start the DFS search from 1
+  dfs(0, 0, a[0], m, ans);
 
   cout << ans << endl;
-
-  // Does not care if the restaurant contains a cat or not.
-  // Just the path to it.
-  // If there is a cat in his house, this counts as 1.
-  // Simply build up a graph and add the cats seen.
-  // Run DFS and count the pairs.
-
   return 0;
 }
 
