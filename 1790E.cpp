@@ -8,67 +8,47 @@ void solution() {
   ll x;
 
   ll max_X = 536870912;
-  ll max_number = 4294967296;
+  ll max_mid = 4294967296;
 
   cin >> x;
 
-  // Two numbers a, b. x = a xor b = (a + b) >> 2
-  // (a xor b) << 2 = (a + b)
-  //
-  // We should therefore found upper bounds on the numbers.
-  //
-  // 11 xor 01 = 10
-  // 10 << 2 = 100 = a + b
-  // We can atleast split into a range of x.
-  // Since x*2 = a + b
-  // Brute force is to start one at x*2 and the other at 1?
-  // But 2x xor 1 = 2x - 1
-  //
-  // They mention that a,b can be 2^3 * x. = 8 * x
-  // Need O(nlogn).
-  //
-  // Feels like we can do a binary search.
-  // So start at 8*x?
-  ll left = 1;
-  ll right = 8 * x;
+  ll a = 0;
+  ll b = x;
+  set<int> seen;
   bool found = false;
 
-  // Now this is O(n^2).
-  // What can we do to make a proper binary search?
+  ll mid = x;
 
-  for (; right > x; right--) {
-    left = 1;
-    ll test_right = right;
-    while (left < test_right) {
-      // cout << (x << 1) << " " << (left xor i) << endl;
-      ll mid = left + ((test_right - left) / 2);
-
-      if (x << 1 == mid + test_right && x == (mid xor test_right)) {
-        left = mid;
-        right = test_right;
-        found = true;
-        break;
-      } else if (mid + test_right > (x << 1)) {
-        test_right = mid - 1;
-      } else {
-        left = mid + 1;
-      }
-
-      // cout << left << ":" << i << endl;
-    }
-    if (found) {
+  while (mid >= 1 && mid <= max_mid) {
+    if (seen.find(a) != seen.end()) {
       break;
+    }
+    mid = a + ((b - a) >> 1);
+
+    seen.insert(a);
+    a = mid xor x;
+
+    if ((a + mid) == 4 * (a & mid)) {
+      found = true;
+      b = mid;
+      break;
+    } else if (a + mid > (x << 1)) {
+      b = mid - 1;
+    } else {
+      b = mid + 1;
     }
   }
 
   if (found) {
-    cout << left << " " << right << endl;
+    cout << a << " " << b << "\n";
   } else {
-    cout << -1 << endl;
+    cout << -1 << "\n";
   }
 }
 
 int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
   int t;
   cin >> t;
 
