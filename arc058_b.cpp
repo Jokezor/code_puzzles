@@ -7,7 +7,7 @@ using namespace std;
 void solution() {
   int modN = 1000000007;
   // What should we do?
-  int H, W, A, B;
+  ll H, W, A, B;
 
   cin >> H >> W >> A >> B;
 
@@ -36,18 +36,17 @@ void solution() {
     return res % modN;
   };
 
-  // cout << factorial(W - 1) << endl;
-  cout << factorial(H + W - 2) << "\n";
-  cout << factorial(H - 1) << "\n";
-  cout << factorial(W - 1) << "\n";
+  cout << factorial(H + W - 2) % modN << endl;
+  cout << (factorial(H - 1) % modN) * factorial(W - 1) << endl;
 
   ll all_combinations = (((factorial(H + W - 2) % modN)) /
                          ((factorial(H - 1) * factorial(W - 1)) % modN));
   ll combinations_removed =
-      (((factorial(A - 1) % modN) * (factorial(B - 1) % modN)) /
-       ((factorial(A - 1)) % modN));
+      (((factorial(A + B - 2) % modN)) /
+       (((factorial(A - 1) % modN) * (factorial(B - 1) % modN)) % modN));
 
-  cout << all_combinations << "\n";
+  cout << all_combinations << " " << combinations_removed << "\n";
+  cout << all_combinations - combinations_removed << "\n";
 
   /*
   for (int i = 1; i < H; i++) {
