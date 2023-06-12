@@ -36,27 +36,23 @@ double leading_pow(double a, ll b) {
 }
 
 void solution() {
+  // Idea is that we use double for the leading digits and divide as soon as we
+  // get above 10. That way we ensure that the leading digits are preserved and
+  // we ignore the lower digits.
+  //
+  // For calculating the trailing digits, we use a normal binary exponentiation
+  // but with modulus 1000 to only get the last 3 digits.
+  //
   double n;
   ll k;
 
   cin >> n >> k;
 
-  // Idea:
-  // Only keep the highest parts in one and the lower parts in another.
-  // Getting the first 3 digits is the same as the highest 3 digits.
-  // This is the same as doing binpow % 1000.
-  // Keep only the highest 3 digits after each power!
-  // Keep only the lowest 3 digits for the trailing numbers!
-  // 9921 ^ 3 => 9921 ^ 2 = 98426241
-  // 984 * 9921
-  // We can actually always only use the leading 3 digits
   double leading_digits = leading_pow(n, k);
   double trailing_digits = binpow(n, k, 1000);
 
   cout << (int)(leading_digits * 100) << "..." << setw(3) << setfill('0')
        << (int)(trailing_digits) << endl;
-
-  // printf("%d...%d\n", (int)(leading_digits * 100), (int)trailing_digits);
 }
 
 int main() {
