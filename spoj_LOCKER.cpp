@@ -19,36 +19,27 @@ ll binpow(ll a, ll b, ll m) {
 
 void solution() {
   ll n;
-  // Always take the lowest multiple possible unless
-  // After taking the multiple, the rest is < 2.
-  // So take 2's and then the rest.
-  // 5, take 2, 3, take 3.
-  // binpow(4, n / 4) * n -
-  //
   cin >> n;
 
   ll res = 0;
   ll m = 1000000007;
 
-  if (n > 2 && n % 2 == 0) {
-    res = binpow(2, n / 2, m);
-  } else if (n > 3) {
-    res = 3;
-    n -= 3;
-    res = (res * binpow(2, n / 2, m)) % m;
+  if (n >= 5) {
+    // Edge case, if instead of taking a multiple of 3, we could take 4, that is
+    // preferable.
+    if (n % 3 == 1) {
+      res = binpow(3, (n / 3 - 1), m);
+      n = n - 3 * (n / 3 - 1);
+    } else {
+      res = binpow(3, n / 3, m);
+      n %= 3;
+    }
+    if (n)
+      res = res * n % m;
   } else {
     res = n;
   }
   cout << res << "\n";
-
-  // Works but too slow.
-  /*
-  while (n > 3) {
-    res = (res * 2) % m;
-    n -= 2;
-  }
-  res = res * n % m;
-  */
 }
 
 int main() {
