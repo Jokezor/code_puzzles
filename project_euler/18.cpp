@@ -23,12 +23,11 @@ int main() {
       {63, 66, 4, 68, 89, 53, 67, 30, 73, 16, 69, 87, 40, 31},
       {4, 62, 98, 27, 23, 9, 70, 98, 73, 93, 38, 53, 60, 4, 23}};
 
-  vector<vector<int>> example_triangle = {{3}, {7, 4}, {2, 4, 6}, {8, 5, 9, 3}};
-
   vector<vector<int>> dp = triangle;
 
   int n = dp.size();
 
+  // Bottom up DP
   for (int i = n - 2; i >= 0; i--) {
     for (int j = 0; j < dp[i].size(); j++) {
       dp[i][j] += max(dp[i + 1][j], dp[i + 1][j + 1]);
@@ -39,6 +38,7 @@ int main() {
 
   cout << res << "\n";
 
+  // Top down DP
   dp = triangle;
   for (int i = 1; i < n; i++) {
     for (int j = 0; j < dp[i].size(); j++) {
