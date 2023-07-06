@@ -11,41 +11,84 @@
 
 using namespace std;
 
+vector<mpz_class> continued_fractions(mpq_class a, mpq_class b) {
+  // https://en.wikipedia.org/wiki/Continued_fraction
+  double eps = 1e-6;
+  vector<mpz_class> fractions;
+
+  while (a > eps && b > eps) {
+    fractions.push_back(mpz_class(a / b));
+    mpq_class temp = b;
+    b = a - b * mpz_class(a / b);
+    a = temp;
+  }
+
+  return fractions;
+}
+
 int main() {
-  // Essentially, this algorithm works but only for smaller n.
-  // Since n is actually unbounded, we need to think of ways of doing
-  // such a comparison with array operations.
 
   clock_t start = clock();
 
-  mpz_class D = 61;
-  mpz_class n = 226153980;
-  mpz_class max_X = 0;
-  mpz_class optimal_D = 0;
+  mpz_class max_h = 0;
+  int max_n = -1;
 
-  for (mpz_class d = 2; d <= D; d++) {
-    mpz_class min_X = 0;
-    for (mpz_class y = 1; y <= n; y++) {
-      mpz_class x_candidate = (mpz_class(1) + d * y * y);
-      mpz_class sqrt_x_candidate = mpz_class(sqrt(x_candidate));
-      if (d == 61 && y % 1000 == 0) {
-        cout << sqrt_x_candidate << " " << x_candidate << "\n";
-      }
-      if ((sqrt_x_candidate * sqrt_x_candidate) == x_candidate) {
-        if (min_X == 0) {
-          min_X = sqrt_x_candidate;
-        }
-        min_X = min(min_X, sqrt_x_candidate);
-      }
+  for (int n = 2; n <= 1000; n++) {
+    double a = sqrt(n);
+    double b = 1;
+
+    // Start by getting the continued fractions
+    vector<mpz_class> fractions = continued_fractions(a, b);
+
+    vector<mpz_class> h(fractions.size() + 2);
+    vector<mpz_class> k(fractions.size() + 2);
+
+    h[0] = 0;
+    h[1] = 1;
+
+    k[0] = 1;
+    k[1] = 0;
+
+    // calculate convergents
+    for (int i = 0; i < fractions.size(); i++) {
+      h[i + 2] = fractions[i] * h[i + 1] + h[i];
+      k[i + 2] = fractions[i] * k[i + 1] + k[i];
     }
-    cout << min_X << "\n";
-    if (min_X > max_X) {
-      max_X = min_X;
-      optimal_D = d;
+    /*
+    cout << "a: [";
+    for (int i = 0; i < fractions.size() - 1; i++) {
+      cout << fractions[i] << ", ";
+    }
+    cout << fractions[fractions.size() - 1] << "]\n";
+
+    cout << "h: [";
+    for (int i = 0; i < h.size() - 1; i++) {
+      cout << h[i] << ", ";
+    }
+    cout << h[h.size() - 1] << "]\n";
+
+    cout << "k: [";
+    for (int i = 0; i < k.size() - 1; i++) {
+      cout << k[i] << ", ";
+    }
+    cout << k[k.size() - 1] << "]\n";
+    */
+
+    // Now take and calculate pell's approximation of h^2 - n*k^2 which should
+    // be 1.
+    for (int i = 2; i < h.size(); i++) {
+      if ((h[i] * h[i] - n * k[i] * k[i]) == 1) {
+        cout << h[i] << " " << k[i] << "\n";
+        if (h[i] > max_h) {
+          max_h = h[i];
+          max_n = n;
+        }
+        break;
+      }
     }
   }
 
-  cout << "x=" << max_X << " occured for d=" << optimal_D << "\n";
+  cout << max_n << " " << max_h << "\n";
 
   clock_t end = clock();
 
