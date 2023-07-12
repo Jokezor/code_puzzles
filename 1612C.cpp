@@ -5,27 +5,32 @@
 using namespace std;
 
 void solution() {
-  // Currently looking at the sum is k^2
-  // Which means first half up to k is (k^2 - k)/2
-  //
-  // Idea is to check what percentage of the sum that x will allow and then ceil
-  // on that since the ban is after that message is sent. Then the messages will
-  // be taken from
-  //
-  //
-  // First of, if x >= k^2, then the answer is 2*k -1
-  //
-  //
-  //
   ll k, x;
 
   cin >> k >> x;
 
-  // Rewrite of x >= k^2 to avoid big numbers
   if (x / k >= k) {
     cout << 2 * k - 1 << "\n";
     return;
   }
+
+  ll ans = 0;
+  if (x / k <= (k + 1) / 2) {
+    // find n such that 2*x = (n^2 + n), then take ans = ceil(n)
+    double n = -0.5 + sqrt(1 / 4 + 2 * x);
+    ans = ceil(n);
+  } else {
+    // similar procedure but first remove k(k+1)/2
+    // find n such that n*k - n(n+1)/2 = 2x - k(k+1)
+    //
+    // => n = (2*k-1)/2 - sqrt(((2*k-1)/2)^2 - 2*x + k(k+1))
+    //
+    // then take ans = k + ceil(n)
+    double n_factor = (double)(2 * k - 1) / 2;
+    double n = n_factor - sqrt(n_factor * n_factor - 2 * x + k * (k + 1));
+    ans = ceil(n) + k;
+  }
+  cout << ans << "\n";
 }
 
 int main() {
