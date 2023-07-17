@@ -12,34 +12,17 @@ def get_highest_power(n, k):
 
 def solution(n):
     # Your code here
-    # Consider more of a DP approach.
-    # So first code up the DP approach with top down since we won't hit all.
-    # But also look at the examples, when do we converge on the power of 2
-    # series?
     n = int(n)
     ans = 0
 
-    if n == 0:
-        return ans
-
-    while n % 2 == 0:
-        print("hey")
+    while n > 1:
+        if n % 2 == 0:
+            n //= 2
+        elif n % 4 == 1 or n == 3:
+            n -= 1
+        else:
+            n += 1
         ans += 1
-        n //= 2
-
-    print(n, ans)
-    k = get_highest_power(n, 2)
-    # bit_mask = (1 << k - 1) - 1
-
-    steps_to_higher_power = abs(n - (1 << k))
-    steps_to_lower_power = abs(n - (1 << k - 1))
-
-    if steps_to_lower_power <= steps_to_higher_power:
-        ans += (k - 1) + steps_to_lower_power
-    else:
-        ans += k + steps_to_higher_power
-
-    print(ans, steps_to_higher_power, steps_to_lower_power, k)
 
     return ans
 
@@ -47,13 +30,27 @@ def solution(n):
 assert solution("0") == 0
 assert solution("1") == 0
 assert solution("2") == 1
+assert solution("3") == 2
 assert solution("4") == 2
+assert solution("5") == 3
+assert solution("6") == 3
 assert solution("7") == 4
+assert solution("8") == 3
+assert solution("9") == 4
+assert solution("10") == 4
+assert solution("11") == 5
+assert solution("12") == 4
+assert solution("13") == 5
+assert solution("14") == 5
 assert solution("15") == 5
 assert solution("16") == 4
+assert solution("17") == 5
+assert solution("18") == 5
 assert solution("31") == 6
-print(solution("1000"))
-assert solution("1000") == 13
+assert solution("29") == 7
+assert solution(f"{29*16}") == 11
+assert solution(f"{17*32}") == 10
+assert solution("1000") == 12
 
 # solution("".join([str(random.randint(0, 9)) for _ in range(314)]))
 # solution(4)
