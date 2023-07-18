@@ -28,8 +28,18 @@ def solution(fractions):
 
     # Now lets do a BFS of all the states.
     # What do we need prior?
+    # Some kind of state to do the traversal.
     return fraction
 
+
+m0 = [
+    [0, 1, 0, 0, 0, 1],
+    [4, 0, 0, 3, 2, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+]
 
 assert solution([(2, 3), (3, 5)]) == (19, 15)
 assert solution([(3, 8), (5, 12)]) == (19, 24)
