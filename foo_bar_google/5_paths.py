@@ -80,14 +80,19 @@ def solution(m):
     # Perform BFS until the probability is close to 0
     fractions = {}
     q = deque()
-    q.append((0, (1, 1)))
+    q.append((0, (1, 1), [0]))
+    paths = []
     eps = 0.00000001
 
     while q:
-        state, prob = q.popleft()
+        state, prob, current_path = q.popleft()
 
         # A terminal state
         if not graph[state]:
+            paths.append(current_path[:])
+
+            # Remove the last since its a terminal
+            current_path.pop()
             new_fraction = Fraction(prob[0], prob[1])
             if state not in fractions:
                 fractions[state] = new_fraction
@@ -100,8 +105,9 @@ def solution(m):
                 prob[1] * target_prob[1],
             )
             if (float(new_prob[0]) / new_prob[1]) > eps:
-                q.append((target_state, new_prob))
+                q.append((target_state, new_prob, current_path + [target_state]))
 
+    print(paths)
     probabilities = {}
     for terminal_state in fractions:
         probabilities[terminal_state] = fractions[terminal_state].limit_denominator(
@@ -134,31 +140,6 @@ m0 = [
     [0, 0, 0, 0, 0, 0],
 ]
 assert solution(m0) == [0, 3, 2, 9, 14]
-# 0/14, 3/14, 2/14, 9/14
-
-# p0 = 4/9p1
-# p1 = 0.5p0
-# p2 = 0
-# p3 = 3/9p1
-# p4 = 2/9p1
-# p5 = 0.5p0
-
-# p0 + p1 + p2 + p3 + p4 + p5 = 1
-# p2 = 0
-# p0 + p1 + p3 + p4 + p5 = 1
-# Remove non terminal states
-
-# p3 + p4 + p5 = 1
-# (5/9)p1 + 0.5p0 = 1
-# p0 = 1
-
-[0, 4 / 9, 0, 0, 0, 0]
-[0.5, 0, 0, 0, 0, 0]
-[0, 0, 0, 0, 0, 0]
-[0, 3 / 9, 0, 0, 0, 0]
-[0, 2 / 9, 0, 0, 0, 0]
-[0.5, 0, 0, 0, 0, 0]
-
 
 m1 = [
     [0, 2, 1, 0, 0],
@@ -168,9 +149,3 @@ m1 = [
     [0, 0, 0, 0, 0],
 ]
 assert solution(m1) == [7, 6, 8, 21]
-# 7/21,  6/21, 8/21
-# p0 = 1 (not terminal)
-# p1 = 2/3p0, 2/3 (not terminal)
-# p2 = (1/3)p0, 1/3 = 7/21
-# p3 = (3/7)p1, 6/21
-# p4 = (4/7)p1, 8/21

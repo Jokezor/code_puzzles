@@ -47,7 +47,8 @@ def convert_to_common_denominator(fractions):
 
     numerator = 0
     for fraction in fractions:
-        numerator += int(denominator / fraction.denominator) * fraction.numerator
+        numerator += int(denominator / fraction.denominator) * \
+            fraction.numerator
 
     return (int(numerator), int(denominator))
 
@@ -74,41 +75,36 @@ def solution(m):
 
         for j in range(len(m[i])):
             if m[i][j] > 0:
-                fraction = (m[i][j], sum(m[i]))
+                fraction = float(m[i][j]) / sum(m[i])
                 graph[i].append((j, fraction))
 
     # Perform BFS until the probability is close to 0
-    fractions = {}
+    fractions = defaultdict(list)
     q = deque()
-    q.append((0, (1, 1)))
-    eps = 0.00000001
+    q.append((0, 1.0))
+    eps = 0.00000000000000001
 
     while q:
         state, prob = q.popleft()
 
         # A terminal state
         if not graph[state]:
-            new_fraction = Fraction(prob[0], prob[1])
-            if state not in fractions:
-                fractions[state] = new_fraction
-            else:
-                fractions[state] = new_fraction + fractions[state]
+            fractions[state].append(prob)
 
         for target_state, target_prob in graph[state]:
-            new_prob = (
-                prob[0] * target_prob[0],
-                prob[1] * target_prob[1],
-            )
-            if (float(new_prob[0]) / new_prob[1]) > eps:
+            new_prob = prob * target_prob
+            if new_prob > eps:
                 q.append((target_state, new_prob))
 
     probabilities = {}
     for terminal_state in fractions:
-        probabilities[terminal_state] = fractions[terminal_state].limit_denominator(
-            1000
+        fraction = Fraction.from_float(sum(fractions[terminal_state]))
+        probabilities[terminal_state] = find_best_fraction(
+            fraction.numerator, fraction.denominator
         )
 
-    _, common_denominator = convert_to_common_denominator(list(probabilities.values()))
+    _, common_denominator = convert_to_common_denominator(
+        list(probabilities.values()))
 
     ans = {terminal_state: 0 for terminal_state in terminal_states}
     for terminal_state in sorted(probabilities.keys()):
@@ -120,57 +116,5 @@ def solution(m):
     # print([*ans.values(), common_denominator])
     result = list(ans.values())
     result.append(common_denominator)
-    # print(result)
 
     return result
-
-
-m0 = [
-    [0, 1, 0, 0, 0, 1],
-    [4, 0, 0, 3, 2, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-]
-assert solution(m0) == [0, 3, 2, 9, 14]
-# 0/14, 3/14, 2/14, 9/14
-
-# p0 = 4/9p1
-# p1 = 0.5p0
-# p2 = 0
-# p3 = 3/9p1
-# p4 = 2/9p1
-# p5 = 0.5p0
-
-# p0 + p1 + p2 + p3 + p4 + p5 = 1
-# p2 = 0
-# p0 + p1 + p3 + p4 + p5 = 1
-# Remove non terminal states
-
-# p3 + p4 + p5 = 1
-# (5/9)p1 + 0.5p0 = 1
-# p0 = 1
-
-[0, 4 / 9, 0, 0, 0, 0]
-[0.5, 0, 0, 0, 0, 0]
-[0, 0, 0, 0, 0, 0]
-[0, 3 / 9, 0, 0, 0, 0]
-[0, 2 / 9, 0, 0, 0, 0]
-[0.5, 0, 0, 0, 0, 0]
-
-
-m1 = [
-    [0, 2, 1, 0, 0],
-    [0, 0, 0, 3, 4],
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0],
-]
-assert solution(m1) == [7, 6, 8, 21]
-# 7/21,  6/21, 8/21
-# p0 = 1 (not terminal)
-# p1 = 2/3p0, 2/3 (not terminal)
-# p2 = (1/3)p0, 1/3 = 7/21
-# p3 = (3/7)p1, 6/21
-# p4 = (4/7)p1, 8/21
