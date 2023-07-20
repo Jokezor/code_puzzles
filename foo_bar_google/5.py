@@ -1,8 +1,11 @@
 from fractions import Fraction
-from collections import defaultdict, deque
 
 
 def gcd(a, b):
+    """
+    Calculates the greatest common divisor of a and b
+    Simply takes the modulo of a with b and swap them
+    """
     while b:
         a %= b
         a, b = b, a
@@ -10,119 +13,144 @@ def gcd(a, b):
 
 
 def lcm(a, b):
+    """
+    Calculates lcm using the fact that x*y = lcm*gcd
+    """
     return (a / gcd(a, b)) * b
 
 
-def find_best_fraction(numerator, denominator, max_denominator=1000000):
-    if max_denominator < 1:
-        raise ValueError("max_denominator should be at least 1")
-    if denominator <= max_denominator:
-        return Fraction(numerator, denominator)
-
-    p0, q0, p1, q1 = 0, 1, 1, 0
-    n, d = numerator, denominator
-    while True:
-        a = n // d
-        q2 = q0 + a * q1
-        if q2 > max_denominator:
-            break
-        p0, q0, p1, q1 = p1, q1, p0 + a * p1, q2
-        n, d = d, n - a * d
-
-    k = (max_denominator - q0) // q1
-    bound1 = Fraction(p0 + k * p1, q0 + k * q1)
-    bound2 = Fraction(p1, q1)
-    if abs(bound2 - Fraction(numerator, denominator)) <= abs(
-        bound1 - Fraction(numerator, denominator)
-    ):
-        return bound2
-    else:
-        return bound1
-
-
 def convert_to_common_denominator(fractions):
+    """
+    Takes in a list of fractions
+    Calculates the common denominator of all the fractions
+    Using that the common denominator is the least common multiple
+    or lcm of all denominators.
+    """
     denominator = 1
     for fraction in fractions:
         denominator = lcm(denominator, fraction.denominator)
 
-    numerator = 0
-    for fraction in fractions:
-        numerator += int(denominator / fraction.denominator) * fraction.numerator
+    numerators = [
+        fraction.numerator * (denominator / fraction.denominator)
+        for fraction in fractions
+    ]
 
-    return (int(numerator), int(denominator))
+    return (numerators, denominator)
 
 
-def solution(m):
-    # Perform a BFS on the states
-    # Once you reach a node with no children, you add up the probability
-    # Else we continue multiply with the probability of the current cell.
+def get_Q_R(m):
+    """
+    Given a matrix m, representing a markov chain of state transition
+    occurences,
+    returns the matrix Q holding the probability of transition
+    between transient states.
 
-    # Take the nominator and denominator separately
-    # Get the lcm(x,y) this is the denominator.
-    # We will generate a list of fractions for each state
-    # So we run convert_to_common_denominator() for each state.
-    # Then we combine them all and take the common denominator.
-
-    # Build up the graph
-    graph = defaultdict(list)
+    And the matrix R holding the probability of transition to absorbing states.
+    """
+    Q = []
+    R = []
     terminal_states = []
+    transient_states = []
 
     for i in range(len(m)):
         if all(m[i][k] == 0 for k in range(len(m[i]))):
             terminal_states.append(i)
             continue
+        else:
+            transient_states.append(i)
+
+    for i in transient_states:
+        q = []
+        r = []
 
         for j in range(len(m[i])):
-            if m[i][j] > 0:
-                fraction = (m[i][j], sum(m[i]))
-                graph[i].append((j, fraction))
-
-    # Perform BFS until the probability is close to 0
-    fractions = {}
-    q = deque()
-    q.append((0, (1, 1)))
-    eps = 0.00000001
-
-    while q:
-        state, prob = q.popleft()
-
-        # A terminal state
-        if not graph[state]:
-            new_fraction = Fraction(prob[0], prob[1])
-            if state not in fractions:
-                fractions[state] = new_fraction
+            if j in terminal_states:
+                r.append(Fraction(m[i][j], max(1, sum(m[i]))))
             else:
-                fractions[state] = new_fraction + fractions[state]
+                q.append(Fraction(m[i][j], max(1, sum(m[i]))))
 
-        for target_state, target_prob in graph[state]:
-            new_prob = (
-                prob[0] * target_prob[0],
-                prob[1] * target_prob[1],
-            )
-            if (float(new_prob[0]) / new_prob[1]) > eps:
-                q.append((target_state, new_prob))
+        Q.append(q)
+        R.append(r)
 
-    probabilities = {}
-    for terminal_state in fractions:
-        probabilities[terminal_state] = fractions[terminal_state].limit_denominator(
-            1000
-        )
+    return (Q, R)
 
-    _, common_denominator = convert_to_common_denominator(list(probabilities.values()))
 
-    ans = {terminal_state: 0 for terminal_state in terminal_states}
-    for terminal_state in sorted(probabilities.keys()):
-        ans[terminal_state] = int(
-            (common_denominator / probabilities[terminal_state].denominator)
-            * probabilities[terminal_state].numerator
-        )
+def invert_I_minus_Q(Q):
+    """
+    Given the matrix Q.
 
-    # print([*ans.values(), common_denominator])
-    result = list(ans.values())
-    result.append(common_denominator)
-    # print(result)
+    Will invert the matrix and return the matrix N such as
 
-    return result
+    N = (I-Q)^-1
+    That is, the matrix inverse of (I-Q).
+    """
+    n = len(Q)
+    I = [[Fraction(int(i == j)) for i in range(n)] for j in range(n)]
+    I_Q = [[I[i][j] - Q[i][j] for j in range(n)] for i in range(n)]
+
+    # Gauss elimination
+    for i in range(n):
+        # First swap the rows for numerical stability
+        max_row = max(range(i, n), key=lambda row: abs(I_Q[row][i]))
+        I_Q[i], I_Q[max_row] = I_Q[max_row], I_Q[i]
+        I[i], I[max_row] = I[max_row], I[i]
+
+        pivot = I_Q[i][i]
+        I_Q[i] = [val / pivot for val in I_Q[i]]
+        I[i] = [val / pivot for val in I[i]]
+        for j in range(n):
+            if i != j:
+                ratio = I_Q[j][i]
+                I_Q[j] = [I_Q[j][k] - ratio * I_Q[i][k] for k in range(n)]
+                I[j] = [I[j][k] - ratio * I[i][k] for k in range(n)]
+
+    return I
+
+
+def matrix_multiply(A, B):
+    """
+    Given two matrices A and B, computes the matrix multiplication.
+    """
+    return [
+        [sum(a * b for a, b in zip(row_a, col_b)) for col_b in zip(*B)] for row_a in A
+    ]
+
+
+def solution(m):
+    """
+    Calculates the probabilities of ending up in each terminal state
+    of the provided markov chain, starting from state 0.
+
+    The markov chain is described by a 2D list (m), where the value in the ith row
+    and jth column represents the number of occurrences of transitioning from state i
+    to state j.
+
+    Returns a list where the first elements are numerators of the
+    probabilities for each terminal state and the last element is the common denominator.
+    """
+    # The matrix is already in the terminal state
+    if all(all(m[i][j] == 0 for j in range(len(m[i]))) for i in range(len(m))):
+        return [1, 1]
+
+    # To solve this, we can see that the matrix and the states
+    # Represent an absorbing markov chain
+    # Thus we can use Q as the probabilities of transient states to transient states
+    # And we use R to represent the probabilities of transient states to absorbing states.
+    Q, R = get_Q_R(m)
+
+    # Get the fundamental matrix N
+    N = invert_I_minus_Q(Q)
+
+    # Get the matrix B which represents the absorbing probabilities
+    B = matrix_multiply(N, R)
+
+    # We only care about the probabilities of reaching each terminal node starting at the 0th state
+    probabilities = [probability.limit_denominator() for probability in B[0]]
+
+    # Takes the common denominator of all the fractions
+    numerators, common_denominator = convert_to_common_denominator(probabilities)
+
+    return numerators + [common_denominator]
 
 
 m0 = [
@@ -151,14 +179,6 @@ assert solution(m0) == [0, 3, 2, 9, 14]
 # p3 + p4 + p5 = 1
 # (5/9)p1 + 0.5p0 = 1
 # p0 = 1
-
-[0, 4 / 9, 0, 0, 0, 0]
-[0.5, 0, 0, 0, 0, 0]
-[0, 0, 0, 0, 0, 0]
-[0, 3 / 9, 0, 0, 0, 0]
-[0, 2 / 9, 0, 0, 0, 0]
-[0.5, 0, 0, 0, 0, 0]
-
 
 m1 = [
     [0, 2, 1, 0, 0],
