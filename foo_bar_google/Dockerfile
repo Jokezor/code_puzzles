@@ -1,5 +1,5 @@
 FROM python:2.7
 
-ADD 5.py /
+ADD 6.py /
 
-CMD [ "python", "./5.py"]
+CMD [ "python", "./6.py"]
