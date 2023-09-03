@@ -41,36 +41,16 @@ public:
   bool is_connected(int a, int b) { return parent[a] == parent[b]; }
 };
 
-void dfs(int v, vector<vector<int>> graph, set<int> &visited) {
-  visited.insert(v);
-  for (int u : graph[v]) {
-    if (visited.find(u) == visited.end()) {
-      dfs(u, graph, visited);
-    }
-  }
-}
-
-bool areDisjoint(set<int> s1, set<int> s2) {
-  for (int a : s1) {
-    for (int b : s2) {
-      if (a == b) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
 void solution() {
-  int n, m;
+  int n, m, ans;
 
   cin >> n >> m;
 
   vector<vector<int>> languages(m);
   vector<vector<int>> employees(n);
 
-  // We have which languages can speak to each other.
-  // But we should check by going through the people's languages.
+  // Union find the language sets.
+
   for (int i = 0; i < n; i++) {
     int k;
     cin >> k;
@@ -79,60 +59,70 @@ void solution() {
     while (k--) {
       int l;
       cin >> l;
-      known_languages.push_back(l);
+      known_languages.push_back(l - 1);
     }
     for (int source_language : known_languages) {
       for (int target_language : known_languages) {
-        languages[source_language - 1].push_back(target_language - 1);
+        languages[source_language].push_back(target_language);
       }
     }
     // Add the employees languages
     employees[i] = known_languages;
   }
 
-  vector<set<int>> language_sets(m);
+  // Use union find to get disjoint sets.
+  UnionFind uf;
 
-  // Take the sets once.
-  for (int l = 0; l < m; l++) {
-    dfs(l, languages, language_sets[l]);
+  uf.size = m;
+  uf.parent = vector<int>(m);
+  uf.rank = vector<int>(m);
+
+  for (int i = 0; i < m; i++) {
+    uf.make_set(i);
   }
 
-  // So I have the languages connected.
-  // Now take these and union find on them.
+  for (int i = 0; i < m; i++) {
+    for (int l : languages[i]) {
+      uf.union_sets(i, l);
+    }
+  }
 
-  // Add 1 for each empty set.
-  // We should essentially count how many disjoint sets we have.
-  // Feels like union find.
-  // The answer is the number of disjoint sets -1 + the number of employees with
-  // zero languages
+  // Now lets check which are connected.
   //
-  int ans = 0;
-
-  set<int> full_set;
-  vector<int> v_intersection;
-
-  for (int employee = 0; employee < n; employee++) {
-    if (employees[employee].size() == 0) {
+  for (int e1 = 0; e1 < n; e1++) {
+    if (employees[e1].size() == 0) {
       ans++;
       continue;
     }
-    // Get the set of nodes reachable by all languages known by employee
-    set<int> employee_set;
-    for (int language : employees[employee]) {
-      // Suspected bottleneck.
-      for (int l : language_sets[language - 1]) {
-        employee_set.insert(l);
+    bool connected = false;
+    int source_language;
+    int target_language;
+
+    for (int e2 = e1 + 1; e2 < n; e2++) {
+      vector<int> e1_languages = employees[e1];
+      vector<int> e2_languages = employees[e2];
+
+      for (int l1 : e1_languages) {
+        for (int l2 : e2_languages) {
+          if (uf.is_connected(l1, l2)) {
+            connected = true;
+          }
+        }
+      }
+
+      if (!connected) {
+        if (e1_languages.size() != 0 && e2_languages.size() != 0) {
+          source_language = e1_languages[0];
+          target_language = e2_languages[0];
+        }
       }
     }
-    if (full_set.size() == 0) {
-      full_set = employee_set;
-    } else if (areDisjoint(employee_set, full_set)) {
-      for (int a : employee_set) {
-        full_set.insert(a);
-      }
+    if (!connected) {
       ans++;
+      uf.union_sets(source_language, target_language);
     }
   }
+
   cout << ans << "\n";
 }
 
