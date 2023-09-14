@@ -4,30 +4,31 @@
 
 using namespace std;
 
-// vector<int> coins = {1, 2, 5, 10, 20, 50, 100, 200};
-vector<int> coins = {50, 100, 200};
+vector<int> coins = {10, 20, 50, 100, 200};
+map<int, int> sum_count;
+// vector<int> coins = {50, 100, 200};
 int ans = 0;
 
-int getCoinSum(int i, int k, int c) {
-  cout << i << "\n";
-  if (i < 0) {
-    return 0;
-  }
+void getCoinSum(int i) {
+  int k = 1;
 
-  if (c == 200) {
-    ans += 1;
-  }
-
-  if (c > 200) {
-    if (k * coins[i] > 200) {
-      getCoinSum(i - 1, 0, 0);
+  while (k * coins[i] < 200) {
+    for (int j = 1; j < 200; j++) {
+      if (j + k * coins[i] > 200) {
+        break;
+      }
+      if (sum_count[j] > 0) {
+        sum_count[j + k * coins[i]]++;
+      }
     }
-    getCoinSum(i - 1, 0, 0);
-  } else {
-    getCoinSum(i, k + 1, c + coins[i]);
+    k++;
   }
 
-  return ans;
+  k = 1;
+  while (k * coins[i] <= 200) {
+    sum_count[k * coins[i]]++;
+    k++;
+  }
 }
 
 #define ll long long
@@ -36,11 +37,14 @@ int main() {
 
   clock_t start = clock();
 
-  int i = coins.size() - 1;
+  for (int i = 0; i < coins.size(); i++) {
+    getCoinSum(i);
 
-  int c = 0;
-
-  cout << getCoinSum(i, c) << "\n";
+    for (int j = 0; j <= 200; j++) {
+      cout << j << ": " << sum_count[j] << "\n";
+    }
+  }
+  cout << sum_count[200] << "\n";
 
   clock_t end = clock();
 
