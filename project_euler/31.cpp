@@ -4,12 +4,12 @@
 
 using namespace std;
 
-vector<int> coins = {10, 20, 50, 100, 200};
+vector<int> coins = {1, 2, 5, 10, 20, 50, 100, 200};
 map<int, int> sum_count;
-// vector<int> coins = {50, 100, 200};
-int ans = 0;
 
 void getCoinSum(int i) {
+
+  map<int, int> new_sum_count;
   int k = 1;
 
   while (k * coins[i] < 200) {
@@ -18,7 +18,7 @@ void getCoinSum(int i) {
         break;
       }
       if (sum_count[j] > 0) {
-        sum_count[j + k * coins[i]]++;
+        new_sum_count[j + k * coins[i]] += (sum_count[j]);
       }
     }
     k++;
@@ -26,8 +26,12 @@ void getCoinSum(int i) {
 
   k = 1;
   while (k * coins[i] <= 200) {
-    sum_count[k * coins[i]]++;
+    new_sum_count[k * coins[i]]++;
     k++;
+  }
+
+  for (int p = 0; p <= 200; p++) {
+    sum_count[p] += new_sum_count[p];
   }
 }
 
