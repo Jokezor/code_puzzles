@@ -30,7 +30,7 @@ int main() {
 
   ll ans = 0;
 
-  for (int i = 1; i < 10000; i++) {
+  for (int i = 1; i < 2000; i++) {
     bool duplicate = false;
     set<int> used_digits;
 
@@ -44,7 +44,8 @@ int main() {
     if (duplicate) {
       continue;
     }
-    for (int j = 1; j < 10000; j++) {
+    for (int j = i + 1; j < 2000; j++) {
+      // cout << i << "x" << j << "\n";
       int used[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
       for (int d : used_digits) {
