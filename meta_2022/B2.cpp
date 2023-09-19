@@ -5,12 +5,38 @@
 
 using namespace std;
 
+const int dx[4] = {1, -1, 0, 0};
+const int dy[4] = {0, 0, -1, 1};
+
+bool isValid(int x, int y, int R, int C) {
+  return x >= 0 && x < R && y >= 0 && y < C;
+}
+
+vector<pair<int, int>>
+getTreeNeighbors(int x, int y, vector<vector<char>> canvas, int R, int C) {
+  vector<pair<int, int>> neighbors;
+
+  for (int i = 0; i < 4; i++) {
+    int nx = x + dx[i];
+    int ny = y + dy[i];
+    if (isValid(nx, ny, R, C) && canvas[nx][ny] == '^') {
+      neighbors.push_back({nx, ny});
+    }
+  }
+  return neighbors;
+}
+
+int countTreeNeighbors(int x, int y, vector<vector<char>> canvas, int R,
+                       int C) {
+  return getTreeNeighbors(x, y, canvas, R, C).size();
+}
+
 string solution(int c) {
   int R, C;
   string ans = "Possible";
   cin >> R >> C;
 
-  char canvas[R][C];
+  vector<vector<char>> canvas(R, vector<char>(C));
   set<pair<int, int>> original_trees;
 
   // Read and set all trees possible
@@ -42,55 +68,14 @@ string solution(int c) {
     pair<int, int> tree = trees_to_check.front();
     trees_to_check.pop();
 
-    int neighbor_count = 0;
-    // Down
-    if (tree.first + 1 < R) {
-      if (canvas[tree.first + 1][tree.second] == '^') {
-        neighbor_count++;
-      }
-    }
-    // Up
-    if (tree.first != 0) {
-      if (canvas[tree.first - 1][tree.second] == '^') {
-        neighbor_count++;
-      }
-    }
-    // left
-    if (tree.second != 0) {
-      if (canvas[tree.first][tree.second - 1] == '^') {
-        neighbor_count++;
-      }
-    }
-    // right
-    if (tree.second + 1 < C) {
-      if (canvas[tree.first][tree.second + 1] == '^') {
-        neighbor_count++;
-      }
-    }
-
+    int neighbor_count =
+        countTreeNeighbors(tree.first, tree.second, canvas, R, C);
     if (neighbor_count < 2) {
-      if (tree.first + 1 < R) {
-        if (canvas[tree.first + 1][tree.second] == '^') {
-          trees_to_check.push({tree.first + 1, tree.second});
-        }
-      }
-      // Up
-      if (tree.first != 0) {
-        if (canvas[tree.first - 1][tree.second] == '^') {
-          trees_to_check.push({tree.first - 1, tree.second});
-        }
-      }
-      // left
-      if (tree.second != 0) {
-        if (canvas[tree.first][tree.second - 1] == '^') {
-          trees_to_check.push({tree.first, tree.second - 1});
-        }
-      }
-      // right
-      if (tree.second + 1 < C) {
-        if (canvas[tree.first][tree.second + 1] == '^') {
-          trees_to_check.push({tree.first, tree.second + 1});
-        }
+      vector<pair<int, int>> neighbors =
+          getTreeNeighbors(tree.first, tree.second, canvas, R, C);
+
+      for (pair<int, int> neighbor : neighbors) {
+        trees_to_check.push(neighbor);
       }
       if (original_trees.find(tree) != original_trees.end()) {
         ans = "Impossible";
