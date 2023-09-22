@@ -12,8 +12,8 @@ string solution(int c) {
 
   string ans = "Yes";
 
-  string output = ("Case #" + to_string(c + 1) + ": " + ans + "\n");
-  cout << output << "\n";
+  string output = ("Case #" + to_string(c + 1) + ":" + ans + "\n");
+  cout << output;
   return output;
 }
 
