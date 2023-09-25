@@ -3,9 +3,31 @@
 
 #define ll long long
 
+const int MAX_EDGES = 1000000;
 using namespace std;
 
 typedef vector<vector<int>> Matrix;
+
+struct State {
+  int node;
+  int length;
+  int repeated_edges;
+  bitset<MAX_EDGES> edge_bitmap;
+};
+
+struct hash_pair {
+  template <class T1, class T2> size_t operator()(const pair<T1, T2> &p) const {
+    auto hash1 = hash<T1>{}(p.first);
+    auto hash2 = hash<T2>{}(p.second);
+
+    if (hash1 != hash2) {
+      return hash1 ^ hash2;
+    }
+
+    // If hash1 == hash2, their XOR is zero.
+    return hash1;
+  }
+};
 
 int count_repeated_edges(vector<int> path) {
   int repeated_edges = 0;
@@ -70,33 +92,30 @@ int find_repeated_edges_in_shortest_odd_parity_path(int M, int N, Matrix graph,
                                                     int end_node,
                                                     int shortest) {
   // How to find if there is none?
-  queue<vector<int>> q;
+  queue<State> q;
   set<int> visited;
-  set<pair<int, int>> edges_used;
-  vector<int> my_path;
+  unordered_map<pair<int, int>, int, hash_pair> dp;
   int min_edges = -1;
 
-  q.push(vector<int>{start_node, 0, 0});
+  State initial_state = {start_node, 0, 0, bitset<MAX_EDGES>()};
+  q.push(initial_state);
+  dp[{start_node, 0}] = 0;
   visited.insert(start_node);
 
-  // How many paths to wait for?
-  // Maybe we can control how many edges can be repeated?
-  // So first it finds the one with no repeated,
-  // Then I increase so it can find 1 repeated etc.
-  // Maybe with a frequency counter or multiset?
-  int allowed_duplicates = 0;
-
   while (!q.empty()) {
-    vector<int> node_info = q.front();
+    State node_info = q.front();
     q.pop();
 
-    int node = node_info[0];
-    int length = node_info[1];
-    int repeated_edges = node_info[2];
+    int node = node_info.node;
+    int length = node_info.length;
+    int repeated_edges = node_info.repeated_edges;
 
-    if (length >= 2 * M) {
-      break;
+    if (dp.count({node, length % 2}) &&
+        dp[{node, length % 2}] < repeated_edges) {
+      continue;
     }
+
+    dp[{node, length % 2}] = repeated_edges;
 
     if (node == end_node && (length % 2) != (shortest % 2)) {
       // cout << node << " " << length << " " << repeated_edges << "\n";
@@ -105,21 +124,24 @@ int find_repeated_edges_in_shortest_odd_parity_path(int M, int N, Matrix graph,
       }
     }
 
-    if (length >= M) {
-      break;
-    }
-
     vector<int> neighbours = graph[node];
-    for (int neighbour : neighbours) {
+    for (int i = 0; i < graph[node].size(); i++) {
+      int neighbour = graph[node][i];
       if (visited.find(neighbour) == visited.end()) {
-        vector<int> new_node_info = {neighbour, length + 1, repeated_edges};
-        // This assumes we need to count using the same edge more than once
-        if (edges_used.find({node, neighbour}) == edges_used.end() &&
-            edges_used.find({neighbour, node}) != edges_used.end()) {
-          new_node_info[2]++;
+        State next_state = {neighbour, length + 1, repeated_edges,
+                            node_info.edge_bitmap};
+
+        if (next_state.edge_bitmap[i]) {
+          ++next_state.repeated_edges;
+        } else {
+          next_state.edge_bitmap.set(i);
         }
-        edges_used.insert({node, neighbour});
-        q.push(new_node_info);
+
+        if (dp.count({neighbour, next_state.length % 2}) == 0 ||
+            next_state.repeated_edges <
+                dp[{neighbour, next_state.length % 2}]) {
+          q.push(next_state);
+        }
       }
     }
   }
