@@ -5,6 +5,16 @@
 
 using namespace std;
 
+string brute_force(int c, int N, vector<ll> A) {
+  int ans = 0;
+  for (int i = 0; i < N; i++) {
+    for (int j = i + 1; j < N; j++) {
+      int target = A[i] + A[j];
+    }
+  }
+  return to_string(ans);
+}
+
 string solution(int c) {
   int N;
 
@@ -57,8 +67,6 @@ string solution(int c) {
   } else if (ans == 0) {
     ans = sum - A[N - 1];
   }
-
-  // 2 4 10 999999994 1000000000
 
   // Essentially group up pairs of apples in the list
   // What grouping could be done?

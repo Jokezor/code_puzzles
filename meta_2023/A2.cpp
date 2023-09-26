@@ -50,25 +50,39 @@ string solution(int c) {
   ll doubles = 0;
   ll singles = 0;
 
-  if (B < 2 * A) {
-    doubles = C / B;
-    C %= B;
-    singles = C / A;
-    C = 0;
-  } else {
-    singles = C / A;
-    C %= A;
-    doubles = C / B;
-    C = 0;
+  // if (B < 2 * A) {
+  //   doubles = C / B;
+  //   C %= B;
+  //   singles = C / A;
+  //   C = 0;
+  // } else {
+  //   singles = C / A;
+  //   C %= A;
+  //   doubles = C / B;
+  //   C = 0;
+  // }
+
+  // patties += doubles * 2;
+  // patties += singles;
+  //
+  // buns += 2 * doubles;
+  // buns += 2 * singles;
+
+  vector<ll> test_singles = {0LL, 1LL, 2LL, C / A};
+
+  for (ll singles : test_singles) {
+    ll new_C = C - singles * A;
+    if (singles * A >= C) {
+      singles = C / A;
+      new_C = 0;
+    }
+    doubles = new_C / B;
+
+    patties = singles + 2 * doubles;
+    buns = 2 * (singles + doubles);
+
+    K = max(K, max(0LL, min(patties, max(0LL, buns - 1))));
   }
-
-  patties += doubles * 2;
-  patties += singles;
-
-  buns += 2 * doubles;
-  buns += 2 * singles;
-
-  K = max(0LL, min(patties, buns - 1));
 
   string ans = to_string(K);
 
