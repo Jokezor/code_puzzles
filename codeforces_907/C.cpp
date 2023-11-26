@@ -28,33 +28,29 @@ void solution() {
   iota(pb.begin(), pb.end(), 0);
   sort(pb.begin(), pb.end(), [&](int i, int j) { return b[i] < b[j]; });
 
-  for (int p : pa)
-    cout << p << " ";
-  cout << "\n";
-  for (int p : pb)
-    cout << p << " ";
-  cout << "\n";
-
   // Create a mapping of which corresponding
-  // Check which element to map in where
+  // Check which element to map in where we simply add the values of b
+  // for the sorted position.
   vector<int> c(n);
   for (int i = 0; i < n; i++) {
-    cout << pa[i] << ": (" << pb[(i + x) % n] << ", " << b[pb[(i + x) % n]]
-         << ")\n";
+    // Important to note that due to (i+x) %n, we make it so the largest n-x
+    // values of b will be matched to first x values in a.
+    // Making it so we add the smallest x values of b at the largest values
+    // of a!
     c[pa[i]] = b[pb[(i + x) % n]];
   }
-  // int k = 0;
-  // for (int i = 0; i < n; i++) {
-  //   k += (a[i] > c[i]);
-  // }
-  // if (k == x) {
-  //   cout << "YES" << '\n';
-  //   for (int i = 0; i < n; i++) {
-  //     cout << c[i] << " \n"[i == n - 1];
-  //   }
-  // } else {
-  //   cout << "NO" << '\n';
-  // }
+  int k = 0;
+  for (int i = 0; i < n; i++) {
+    k += (a[i] > c[i]);
+  }
+  if (k == x) {
+    cout << "YES" << '\n';
+    for (int i = 0; i < n; i++) {
+      cout << c[i] << " \n"[i == n - 1];
+    }
+  } else {
+    cout << "NO" << '\n';
+  }
 }
 
 int32_t main() {
