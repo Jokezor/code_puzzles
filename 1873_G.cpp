@@ -14,13 +14,13 @@ void solution() {
   int n = s.length();
 
   vector<int> pos;
-  vector<int> prefix_sum(n + 1);
+  vector<int> prefix_sum(n + 1, 0);
 
   pos.push_back(0);
 
   for (int i = 0; i < n; i++) {
     if (s[i] == 'B') {
-      pos.push_back(i);
+      pos.push_back(i + 1);
     } else if (s[i] == 'A') {
       prefix_sum[i + 1] = 1;
     }
@@ -32,60 +32,44 @@ void solution() {
   }
 
   int m = pos.size();
-  bool right_used = false;
 
-  for (int i = 1; i < m - 1; i++) {
-    // So actually, we need to check the best.
-    // Either take the right or left.
-    int diff_left = prefix_sum[pos[i]] - prefix_sum[pos[i - 1]];
-    int diff_right = prefix_sum[pos[i + 1]] - prefix_sum[pos[i]];
+  vector<int> dp(m, -1);
 
-    // Actually, the second to last B can not use right if it does not have
-    // Any extra to the right
-    if (i == m - 2) {
-      bool last_b_has_A = prefix_sum[n] - prefix_sum[pos[i + 1]];
+  // Here we can use dp later for the true/false map.
 
-      // Can take optimal
-      if (last_b_has_A) {
-        if (right_used) {
-          ans += diff_right;
-          right_used = true;
-        } else {
-          if (diff_right > diff_left) {
-            ans += diff_right;
-            right_used = true;
-          } else {
-            ans += diff_left;
-            right_used = false;
-          }
-        }
-      } else if (!right_used) {
-        ans += diff_left;
-        right_used = false;
-      } else {
-        right_used = false;
-      }
-    } else if ((diff_right > diff_left || right_used)) {
-      ans += diff_right;
-      right_used = true;
-    } else {
-      ans += diff_left;
-      right_used = false;
+  auto count_A = [&](auto self, int i, bool right_used) -> int {
+    if (i >= m) {
+      return 0;
     }
-  }
+    if (dp[i] != -1 && right_used) {
+      return dp[i];
+    }
 
-  // Count the number of 'A's after and before.
-  if (m > 1) {
-    int diff_left = prefix_sum[pos[m - 1]] - prefix_sum[pos[m - 2]];
-    int diff_right = prefix_sum[n] - prefix_sum[pos[m - 1]];
-    // cout << diff_left << " " << diff_right << " " << right_used << "\n";
-    // Cant use left, use right.
+    int s_ind = pos[i];
+    int left = prefix_sum[s_ind] - prefix_sum[pos[i - 1]];
+
+    // cout << s_ind << " " << left << "\n";
+    int right = 0;
+
+    if (i < m - 1) {
+      right = prefix_sum[pos[i + 1]] - prefix_sum[s_ind];
+    } else {
+      right = prefix_sum[n] - prefix_sum[s_ind];
+    }
+    // cout << left << ": " << right << "\n";
     if (right_used) {
-      ans += diff_right;
+      dp[i] = max(dp[i], right + self(self, i + 1, true));
     } else {
-      // Free to use optimal.
-      ans += max(diff_left, diff_right);
+      dp[i] = max(dp[i], max(left + self(self, i + 1, false),
+                             right + self(self, i + 1, true)));
     }
+    return dp[i];
+  };
+
+  if (m > 1) {
+    // cout << prefix_sum[pos[1]] << "\n";
+    count_A(count_A, 1, false);
+    ans = dp[1];
   }
 
   cout << ans << "\n";
