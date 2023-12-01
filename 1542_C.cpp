@@ -4,36 +4,36 @@
 
 using namespace std;
 
+ll MAX = (ll)(1e9 + 7);
+
 void solution() {
   ll ans = 0;
   ll n;
 
-  cin >> n;
+  scanf("%lld", &n);
 
   // 1. Add the odd numbers, they have 2 as x.
-  ans += (n + n % 2);
+  ans = (n + n % 2) % MAX;
+  ll current = n / 2;
+  ll curr_multiple = 3;
 
-  // Now we only have even numbers.
+  while (current) {
+    ll reduced_current = current % MAX;
+    ll multiples = (reduced_current - reduced_current / curr_multiple) % MAX;
+    ans = (ans + multiples * curr_multiple % MAX) % MAX;
+    current /= curr_multiple;
+    curr_multiple++;
+  }
 
-  // 2. Add multiples of 6
-  ll multiples_of_6 = n / 6;
-  ans += ((n / 2) - multiples_of_6) * 3;
-
-  // Now for odd multiples of 6
-  ll odd_multiples_of_6 = multiples_of_6 / 2 + multiples_of_6 % 2;
-  ans += 4 * odd_multiples_of_6;
-
-  // 2, 2*3, 6*2, 12*5, 60*7
-  // 2*2*3*5*7
-
-  cout << ans << "\n";
+  printf("%lld\n", ans);
 }
 
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
-  int t = 1;
-  // cin >> t;
+  int t;
+
+  scanf("%d", &t);
 
   while (t--)
     solution();
