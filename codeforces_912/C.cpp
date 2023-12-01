@@ -5,35 +5,36 @@
 using namespace std;
 
 void solution() {
-  int n, k;
+  int n;
 
-  scanf("%d %d", &n, &k);
+  scanf("%d", &n);
 
-  // lets do brute force first to get a feel for it.
   int a[n];
 
   for (int i = 0; i < n; i++) {
     scanf("%d", &a[i]);
   }
 
-  vector<vector<int>> b(n);
+  vector<ll> suf(n + 1, 0);
 
-  // Find how many
-  for (int i = n - 1; i > 1; i--) {
-    // Add current to the subarray
-    b[i].push_back(a[i]);
+  // Take suffixes.
+  // Since suf[i] = a[i] + a[i+1] + ... + a[n-1]
+  // Which means a sum of them gives i*a[i] + (i+1) * a[i+1] etc
+  for (int i = n - 1; i >= 0; i--) {
+    suf[i] = suf[i + 1] + a[i];
+  }
 
-    for (int j = i - 1; j >= 0; j--) {
-      // Check if we get a larger sum by adding or not
-      if ((a[i] + a[j]) * j > (a[i] * i + a[i - 1] * (i - 1))) {
-        b[i].push_back(a[i - 1]);
-      } else {
-        break;
-      }
+  // Include all at least once
+  ll ans = suf[0];
+
+  // Now we increment the suffixes when we would gain on it.
+  for (int i = 1; i < n; i++) {
+    if (suf[i] > 0) {
+      ans += suf[i];
     }
   }
 
-  // :) Do problem, is guuud
+  printf("%lld\n", ans);
 }
 
 int main() {
