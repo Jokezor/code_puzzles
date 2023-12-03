@@ -9,34 +9,18 @@ void solution() {
 
   scanf("%lld", &N);
 
-  vector<int> A(N);
+  vector<ll> A(N);
   for (int i = 0; i < N; i++) {
     cin >> A[i];
   }
 
-  map<int, vector<int>> d;
   for (int i = 0; i < N; ++i) {
-    d[A[i]].push_back(i);
-  }
-
-  sort(A.begin(), A.end(), greater<>());
-
-  vector<ll> ans(N, 0);
-
-  ll sum = 0;
-  int i = 0;
-  while (i < N) {
-    vector<int> positions = d[A[i]];
-    for (int pos : positions) {
-      ans[pos] = sum;
+    ll sum = 0;
+    for (int j = 0; j < N; ++j) {
+      if (j != i && A[j] > A[i]) {
+        sum += A[j];
+      }
     }
-    for (int pos : positions) {
-      sum += A[i];
-    }
-    i += positions.size();
-  }
-  for (int i = 0; i < N; ++i) {
-    ll sum = ans[i];
     cout << sum;
     if (i < N - 1) {
       cout << " ";

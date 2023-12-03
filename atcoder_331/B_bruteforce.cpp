@@ -14,11 +14,11 @@ void solution() {
   // Brute force,
   // Check all, keep minimum.
   // how many L we buy
-  for (int i = 0; i <= N; i++) {
+  for (int i = 0; i <= 100; i++) {
     // How many M we buy
-    for (int j = 0; j <= N; j++) {
+    for (int j = 0; j <= 100; j++) {
       // How many S we buy
-      for (int k = 0; k <= N; k++) {
+      for (int k = 0; k <= 100; k++) {
         if (i * 12 + j * 8 + k * 6 >= N) {
           ans = min(ans, i * L + j * M + k * S);
         }
