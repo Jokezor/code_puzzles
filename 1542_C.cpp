@@ -6,26 +6,32 @@ using namespace std;
 
 ll MAX = (ll)(1e9 + 7);
 
+int gcd(int x, int y) {
+  if (y) {
+    return gcd(y, x % y);
+  } else {
+    return x;
+  }
+}
+
+int lcm(int x, int y) { return (x / gcd(x, y)) * y; }
+
 void solution() {
   ll ans = 0;
   ll n;
 
   scanf("%lld", &n);
 
-  // 1. Add the odd numbers, they have 2 as x.
-  ans = (n + n % 2) % MAX;
-  ll current = n / 2;
-  ll curr_multiple = 3;
+  ll curr_multiple = 1;
 
-  while (current) {
-    ll reduced_current = current % MAX;
-    ll multiples = (reduced_current - reduced_current / curr_multiple) % MAX;
-    ans = (ans + multiples * curr_multiple % MAX) % MAX;
-    current /= curr_multiple;
-    curr_multiple++;
+  int i = 1;
+  while (curr_multiple <= n) {
+    curr_multiple = lcm(curr_multiple, i);
+    ans += (n / curr_multiple) % MAX;
+    ++i;
   }
 
-  printf("%lld\n", ans);
+  printf("%lld\n", (ans + n) % MAX);
 }
 
 int main() {
