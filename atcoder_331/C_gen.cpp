@@ -8,10 +8,10 @@ int main(int argc, char **argv) {
 
   srand(atoi(argv[1])); // srand sets the random seed
 
-  int N = rand() % 20000;
+  int N = max(1, rand() % 20);
   cout << N << "\n";
   for (int i = 0; i < N - 1; i++) {
-    cout << rand() % 1000000 << " ";
+    cout << max(1, rand() % 1000000) << " ";
   }
-  cout << rand() % 1000000 << "\n";
+  cout << max(1, rand() % 1000000) << "\n";
 }

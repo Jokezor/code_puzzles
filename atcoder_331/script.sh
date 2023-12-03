@@ -5,7 +5,7 @@ for i in `seq 1 10`; do
 
     ./C_gen $i > input.txt
     ./C_mine < input.txt > output.txt
-    ./C_bruteforce < input.txt > answer.txt
+    ./C_editorial < input.txt > answer.txt
 
     diff output.txt answer.txt || break
 done
