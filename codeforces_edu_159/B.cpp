@@ -23,23 +23,34 @@ void solution() {
   ll ans = 0;
 
   // Take optimal multiples
-  ll optimal_days = ((n - 8) / 14) + (int)(n >= 8);
+  ll tasks = (ll)((n + 6) / 7);
 
-  while (optimal_days > 0 && p > 0) {
-    ans++;
-    p -= (2 * t + l);
-    optimal_days--;
-  }
+  ll optimal_days = tasks / 2;
+  ll optimal_day_value = 2 * t + l;
 
-  bool taken_task = false;
-  while (p > 0) {
-    if (n < 8 && !taken_task) {
-      p -= t;
-      taken_task = true;
-    }
+  ll needed_days = (ll)ceil((double)p / optimal_day_value);
+
+  // cout << optimal_days << " " << needed_days << "\n";
+
+  // Want to find min x s.t x*y >= p
+  // ceil((double)p/y) gives x.
+  // So we take min(optimal_days, ceil((double)p/y))
+  ll optimal_days_used = min(optimal_days, needed_days);
+
+  ans += optimal_days_used;
+  p -= optimal_days_used * optimal_day_value;
+
+  // cout << ans << " " << p << "\n";
+
+  if (p > 0) {
+    p -= (tasks % 2) * t;
     p -= l;
-    ans++;
+    ans += 1;
   }
+
+  // cout << ans << " " << p << "\n";
+
+  ans += max(0LL, (ll)ceil((double)p / l));
 
   cout << n - ans << "\n";
 }
