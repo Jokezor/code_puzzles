@@ -22,29 +22,28 @@ int gcd(int x, int y) {
 int lcm(int x, int y) { return (x / gcd(x, y)) * y; }
 
 void solution() {
-  int n;
+  // Solve it
+  ll n, k;
+  ll a = 1;
 
-  cin >> n;
-  string s;
-  cin >> s;
+  cin >> n >> k;
 
-  vector<int> char_counter(26, 0);
-
-  for (int i = 0; i < n; i++) {
-    char_counter[s[i] - 'a']++;
+  for (int i = 0; i < n; ++i) {
+    int b;
+    cin >> b;
+    a *= b;
   }
 
-  ll max_char = MAX(char_counter);
-  // max_char > n/2
-  // Meaning more than half is from one char.
-  // So we can match with the rest.
-  if (2 * max_char > n) {
-    cout << 2 * max_char - n << "\n";
-  } else {
-    // We have a spread of chars, we can match all optimally,
-    // But if we have an odd string, we cant pair all.
-    cout << n % 2 << "\n";
+  if (2023 % a) {
+    cout << "NO\n";
+    return;
   }
+
+  cout << "YES\n";
+  for (int i = 0; i < k - 1; ++i) {
+    cout << "1 ";
+  }
+  cout << 2023LL / a << "\n";
 }
 
 int main() {
