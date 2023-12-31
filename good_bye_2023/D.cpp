@@ -23,38 +23,6 @@ int lcm(int x, int y) { return (x / gcd(x, y)) * y; }
 
 void solution() {
   // Solve it
-  int n;
-
-  cin >> n;
-
-  vector<int> a(n);
-
-  for (int i = 0; i < n; i++) {
-    cin >> a[i];
-  }
-
-  ll tot = 0;
-  int odds = 0;
-  for (int i = 0; i < n; i++) {
-    tot += a[i];
-
-    if (a[i] & 1) {
-      odds++;
-    }
-
-    int odd_copy = odds;
-
-    int sub = 0;
-
-    if (i > 0) {
-      sub = odds / 3 + (odds % 3) % 2;
-    }
-
-    string padd = (i == n - 1) ? "" : " ";
-
-    cout << tot - sub << padd;
-  }
-  cout << "\n";
 }
 
 int main() {
