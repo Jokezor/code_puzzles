@@ -21,40 +21,43 @@ int gcd(int x, int y) {
 
 int lcm(int x, int y) { return (x / gcd(x, y)) * y; }
 
+void print(auto &&r) {
+  std::ranges::for_each(r, [](auto &&i) { std::cout << i << ' '; });
+}
+
 void solution() {
   // Solve it
-  int n;
+  int n, k, d;
 
-  cin >> n;
+  cin >> n >> k >> d;
 
   vector<int> a(n);
+  vector<int> v(k);
 
   for (int i = 0; i < n; i++) {
     cin >> a[i];
   }
 
-  ll tot = 0;
-  int odds = 0;
-  for (int i = 0; i < n; i++) {
-    tot += a[i];
-
-    if (a[i] & 1) {
-      odds++;
-    }
-
-    int odd_copy = odds;
-
-    int sub = 0;
-
-    if (i > 0) {
-      sub = odds / 3 + (odds % 3) % 2;
-    }
-
-    string padd = (i == n - 1) ? "" : " ";
-
-    cout << tot - sub << padd;
+  for (int i = 0; i < k; i++) {
+    cin >> v[i];
   }
-  cout << "\n";
+
+  ll ans = 0;
+
+  for (int i = 0; i < d && i <= 2 * n; ++i) {
+    ll cur = 0;
+    for (int j = 0; j < n; j++) {
+      cur += (a[j] == j + 1);
+    }
+    cur += (d - i - 1) / 2;
+
+    ans = max(cur, ans);
+    for (int j = 0; j < v[i % k]; j++) {
+      a[j]++;
+    }
+  }
+
+  cout << ans << "\n";
 }
 
 int main() {

@@ -43,6 +43,10 @@ private:
   const ClockType::time_point start_{};
 };
 
+void print(auto &&r) {
+  std::ranges::for_each(r, [](auto &&i) { std::cout << i << ' '; });
+}
+
 int gcd(int x, int y) {
   if (y) {
     return gcd(y, x % y);
