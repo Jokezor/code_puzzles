@@ -8,9 +8,9 @@ int main(int argc, char **argv) {
 
   srand(atoi(argv[1])); // srand sets the random seed
   int n = atoi(argv[2]);
-  int x = atoi(argv[3]);
+  int x = 2e5;
 
-  cout << n << " " << x << endl;
+  cout << "1\n" << n << "\n";
   for (int i = 0; i < n; i++) {
     cout << 1 + rand() % x << " ";
   }
