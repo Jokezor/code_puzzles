@@ -64,8 +64,7 @@ void solution() {
 
   cin >> n;
 
-  vector<ll> a(n);
-  vector<ll> s(n, 0);
+  vector<ll> a(n, 0);
 
   for (int i = 0; i < n; i++) {
     cin >> a[i];
@@ -73,48 +72,22 @@ void solution() {
 
   ll ans = 0;
 
-  // Fuck it? Test with n heaps?
-  // each index has a heap with the elements to the right of it.
-  // How to construct it?
-  // If we start at index 0:
-  // We would push all the elements to the right in a heap
-  // That or simply binary search with a range to the right?
-  //
-  // Or can we better choose where to start?
-  // We could probably sort
-  // and use IOTA to get a list of the indices.
-  // Then we need to take the max_ind - min_ind
-  int best_s = -1;
+  // s holds smaller last element
+  // t holds bigger last element
 
-  for (int i = 0; i < n; ++i) {
-    vector<ll> s_tmp(n, 0);
-    s_tmp[i] = a[i];
-    int s_tmp_size = 0;
-    int k = i;
+  int s_last = MAX_VAL;
+  int t_last = MAX_VAL;
 
-    for (int j = i + 1; j < n; ++j) {
-      if (s_tmp[k] >= a[j]) {
-        s_tmp[j] = a[j];
-        k = j;
-        s_tmp_size++;
-      }
+  for (int i = 0; i < n; i++) {
+    if (s_last > t_last) {
+      swap(s_last, t_last);
     }
-
-    if (s_tmp_size > best_s) {
-      s = s_tmp;
-      best_s = s_tmp_size;
-    }
-  }
-
-  vector<ll> t;
-  for (int i = 0; i < n; ++i) {
-    if (!s[i]) {
-      t.push_back(a[i]);
-    }
-  }
-
-  for (int i = 0; i < max(0, (int)t.size() - 1); ++i) {
-    if (t[i] < t[i + 1]) {
+    if (a[i] <= s_last) {
+      s_last = a[i];
+    } else if (a[i] <= t_last) {
+      t_last = a[i];
+    } else {
+      s_last = a[i];
       ans++;
     }
   }
