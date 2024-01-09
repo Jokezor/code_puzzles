@@ -58,7 +58,7 @@ void print(auto &&r) {
   cout << "\n";
 }
 
-const int maxN = 10;
+const int maxN = 200005;
 int n;
 int mn[maxN * 4];
 int lz[maxN * 4];
@@ -105,29 +105,22 @@ void incre(int s, int e, int x, int u = 1, int lo = 1, int hi = n) {
   mn[u] = min(mn[2 * u], mn[2 * u + 1]);
 }
 
-// if s = 1, e = 7
-//
 int qmn(int s, int e, int u = 1, int lo = 1, int hi = n) {
-  cout << u << " : " << lo << hi << "\n";
   if (s > e) {
     return MAX_VAL;
   }
   if (lo >= s && hi <= e) {
-    cout << "naaah \n";
     return mn[u];
   }
   propo(u);
   int mid = (lo + hi) >> 1;
   int res = MAX_VAL;
   if (s <= mid) {
-    cout << "tbh \n";
     res = min(res, qmn(s, e, 2 * u, lo, mid));
   }
   if (e > mid) {
-    cout << "totz\n";
     res = min(res, qmn(s, e, 2 * u + 1, mid + 1, hi));
   }
-  print(lz);
   return res;
 }
 
@@ -152,13 +145,7 @@ void solution() {
 
   // Go through all elements of a
   for (int i = 0; i < n; i++) {
-    // Lets look for 8:
-    // qmn(1, 7), qmn(8, 8)
-    qmn(1, a[i] - 1);
-    return;
     int ndp = min(qmn(1, a[i] - 1) + 1, qmn(a[i], n));
-    cout << ndp << "\n";
-    return;
     if (i > 0) {
       if (a[i - 1] < a[i]) {
         incre(1, n, 1);

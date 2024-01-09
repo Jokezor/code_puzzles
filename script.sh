@@ -3,7 +3,7 @@ for i in `seq 1 100`; do
     # I like to do this so I can see progress is being made
     echo $i 
 
-    ./milk_gen $i 4 5 > input.txt
+    ./ferris_gen $i 4 5 > input.txt
     ./ferris < input.txt > output.txt
     ./ferris_naive < input.txt > answer.txt
 
