@@ -14,5 +14,10 @@ int main(int argc, char **argv) {
   for (int i = 0; i < n; i++) {
     cout << 1 + rand() % x << " ";
   }
-  cout << endl;
+  cout << "\n";
+  for (int i = 0; i < n; i++) {
+    int lower = 1 + rand() % x;
+    int upper = max(lower, 1 + rand() % x);
+    cout << 1 + rand() % 2 << " " << lower << " " << upper << "\n";
+  }
 }
