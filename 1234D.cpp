@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <bit>
 #include <bits/stdc++.h>
 #include <string>
 
@@ -76,15 +77,15 @@ void print(auto &&r) {
   cout << "\n";
 }
 
-const int maxN = 10;
+const int maxN = 100013;
 int n, m;
 ll t[maxN * 4][26];
 
 // build
 void build(string &s, ll v = 1, ll tl = 1, ll tr = n) {
   if (tl == tr) {
-    // cout << tl << ":" << tr << "\n";
-    t[v][s[tl] - 'a']++;
+    // Remember, s is 0 index, t and all range queries is 1 indexed.
+    t[v][s[tl - 1] - 'a']++;
     return;
   }
   ll tm = (tl + tr) >> 1;
@@ -118,27 +119,30 @@ void update(string &s, ll l, ll r, ll pos, char c, ll v = 1) {
 }
 //
 // // queries
-ll sum(ll l, ll r, ll v = 1, ll L = 1, ll R = n) {
+unsigned int sum(ll l, ll r, ll v = 1, ll L = 1, ll R = n) {
   if (L > R)
     return 0;
   if (l == L && r == R) {
-    int ans = 0;
-    for (int i = 0; i < 26; ++i) {
-      if (t[v][i]) {
-        ans++;
-      }
+    unsigned int ans = 1 << 27;
+
+    for (int i = 0; i < 26; i++) {
+      ans |= (t[v][i] > 0) << i;
     }
+
     return ans;
   }
   ll mid = (l + r) >> 1;
 
-  // Return a vector
-  sum(l, mid, v * 2, L, min(mid, R));
+  unsigned int x, y;
 
-  // Return a vector
-  sum(mid + 1, r, v * 2 + 1, max(mid + 1, L), R);
+  // Get bits set for left
+  x = sum(l, mid, v * 2, L, min(mid, R));
 
-  // Combine the vectors?
+  // get bits set for right
+  y = sum(mid + 1, r, v * 2 + 1, max(mid + 1, L), R);
+
+  // Combine bits
+  return x | y;
 }
 
 void solution() {
@@ -153,7 +157,6 @@ void solution() {
   build(s);
 
   for (int j = 0; j < m; j++) {
-    cout << m << " j=" << j << "\n";
     ll q = 0, l = 1, r = n;
     char c;
 
@@ -161,10 +164,10 @@ void solution() {
 
     if (q == 1) {
       cin >> l >> c;
-      update(s, 1, n, l, 'b', 1);
+      update(s, 1, n, l, c, 1);
     } else {
       cin >> l >> r;
-      cout << sum(1, n, 1, l, r) << "\n";
+      cout << popcount(sum(1, n, 1, l, r)) - 1 << "\n";
     }
   }
 }
