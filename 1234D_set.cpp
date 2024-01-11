@@ -154,7 +154,12 @@ void solution() {
   n = s.length();
   cin >> m;
 
-  build(s);
+  // Holds the indexes of where each char occurs
+  vector<set<int>> positions(26);
+
+  for (int i = 0; i < n; i++) {
+    positions[s[i] - 'a'].insert(i);
+  }
 
   for (int j = 0; j < m; j++) {
     ll q = 0, l = 1, r = n;
@@ -164,10 +169,25 @@ void solution() {
 
     if (q == 1) {
       cin >> l >> c;
-      update(s, 1, n, l, c, 1);
+
+      int pos = l;
+
+      // Need to update chars.
+      positions[s[pos - 1] - 'a'].erase(pos - 1);
+      s[pos - 1] = c;
+      positions[s[pos - 1] - 'a'].insert(pos - 1);
     } else {
       cin >> l >> r;
-      cout << popcount(sum(1, n, 1, l, r)) - 1 << "\n";
+      int ans = 0;
+      // Need to binary search to find first index smaller.
+      for (int i = 0; i < 26; i++) {
+        // Find how many ith char
+        std::set<int>::iterator it = positions[i].lower_bound(l - 1);
+        if (it != positions[i].end() && *it <= r - 1) {
+          ans++;
+        }
+      }
+      cout << ans << "\n";
     }
   }
 }

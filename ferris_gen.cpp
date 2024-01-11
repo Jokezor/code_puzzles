@@ -10,14 +10,32 @@ int main(int argc, char **argv) {
   int n = atoi(argv[2]);
   int x = n;
 
-  cout << n << " " << n << "\n";
+  string s{};
+  // 97-122 is lowercase ascii letters
   for (int i = 0; i < n; i++) {
-    cout << 1 + rand() % x << " ";
+    s += 97 + rand() % 26;
   }
-  cout << "\n";
+
+  cout << s << "\n";
+  cout << n << "\n";
+
   for (int i = 0; i < n; i++) {
+    int a = 1 + rand() % 2;
+    cout << a << " ";
+
     int lower = 1 + rand() % x;
     int upper = max(lower, 1 + rand() % x);
-    cout << 1 + rand() % 2 << " " << lower << " " << upper << "\n";
+
+    cout << lower << " ";
+    if (a == 1) {
+      cout << static_cast<char>(97 + rand() % 26);
+    } else {
+      cout << upper;
+    }
+    cout << "\n";
   }
+  //   int lower = 1 + rand() % x;
+  //   int upper = max(lower, 1 + rand() % x);
+  //   cout << 1 + rand() % 2 << " " << lower << " " << upper << "\n";
+  // }
 }
