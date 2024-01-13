@@ -8,6 +8,8 @@
 #define MIN(v) *min_element(all(v))
 #define MAX(v) *max_element(all(v))
 #define LB(c, x) distance((c).begin(), lower_bound(all(c), (x)))
+#define THROW(exceptionClass, message)                                         \
+  throw exceptionClass(__FILE__, __LINE__, (message))
 
 using namespace std;
 
@@ -88,29 +90,18 @@ template <class Os, class K> Os &operator<<(Os &os, const std::multiset<K> &v) {
 // const int maxN = 100'013;
 const int maxN = 10;
 int n;
-ll t[maxN * 4];
-ll score[maxN];
+// {best_strength, {strength: {score, count}}}
+vector<pair<int, unordered_map<int, pair<int, int>>>> t(maxN * 4);
 
 // build
-void build(int a[], ll v = 1, ll tl = 1, ll tr = n) {
+void build(int a[], int v = 1, int tl = 1, int tr = n) {
+  if (tl > tr) {
+    return;
+  }
   if (tl == tr) {
-    // Go through all other elements and add
-    // 1 to their score if they divide us.
-    // Also count how many we divide to add our score.
-    // Either best with a map?
-    cout << a[tl] << "\n";
-    for (int i = tl + 1; i <= n; ++i) {
-      if (a[i] % a[tl] == 0) {
-        cout << "hm\n";
-        t[v]++;
-      }
-      if (a[tl] % a[i] == 0) {
-        cout << "what\n";
-        score[i]++;
-      }
-    }
-    t[v] += score[tl];
-    cout << t[v] << "\n";
+    t[v].first = a[tl];
+    t[v].second[a[tl]] = {0, 1};
+    cout << "hmm:" << t[v].first << "\n";
     return;
   }
   ll tm = (tl + tr) >> 1;
@@ -118,8 +109,50 @@ void build(int a[], ll v = 1, ll tl = 1, ll tr = n) {
   build(a, v * 2, tl, tm);
   build(a, v * 2 + 1, tm + 1, tr);
 
-  // Unclear what to store at each non-leaf vertex
-  // t[v] = max(t[2 * v], t[2 * v + 1]);
+  // Need to check for each e.first in t[2*v].second
+  // If any e.first divides any f.first in t[2*v+1].second
+  // (key, value pair where keys are strength), thus first.
+  auto x = t[2 * v];
+  auto y = t[2 * v + 1];
+
+  int best_strength = t[v].first;
+  int most_score = t[v].second[best_strength].first;
+
+  for (pair<int, pair<int, int>> e : x.second) {
+    if (e.first == 0) {
+      continue;
+    }
+    // Add score, count etc from x
+    t[v].second[e.first] = e.second;
+
+    for (pair<int, pair<int, int>> f : y.second) {
+      if (f.first == 0) {
+        continue;
+      }
+      if (f.first % e.first == 0) {
+        // Increment score
+        t[v].second[e.first].first++;
+        if (t[v].second[e.first].first > most_score) {
+          best_strength = e.first;
+          most_score = t[v].second[e.first].first;
+        }
+      }
+      if (e.first % f.first == 0) {
+        t[v].second[f.first].first++;
+        if (t[v].second[f.first].first > most_score) {
+          best_strength = f.first;
+          most_score = t[v].second[f.first].first;
+        }
+      }
+    }
+  }
+
+  // Add count from y
+  for (auto f : y.second) {
+    t[v].second[f.first].second += f.second.second;
+  }
+  t[v].first = best_strength;
+  cout << v << " " << t[v].first << "\n";
 }
 
 // update
@@ -189,7 +222,18 @@ void solution() {
   }
 
   build(a);
-  print(t);
+  // Cant print somehow!
+  // Once I know how I have built my segment tree,
+  // Then I can build my query.
+  // Otherwise I will code in the dark.
+  cout << t[1].first << "\n";
+  for (auto e : t[1].second) {
+    cout << e.first << ", score=" << e.second.first
+         << " , count=" << e.second.second << "\n";
+  }
+
+  // {best_strength, {strength: {score, count}}}
+  // vector<pair<int, unordered_map<int, pair<int, int>>>> t(maxN * 4);
 }
 
 int main() {

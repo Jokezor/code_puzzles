@@ -179,7 +179,7 @@ void solution() {
 
   cin >> n >> m;
 
-  cout << min(m, n) + max(m - n, n - m) << "\n";
+  cout << max(n, m) << "\n";
 }
 
 int main() {
