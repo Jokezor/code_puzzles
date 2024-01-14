@@ -9,13 +9,18 @@ int main(int argc, char **argv) {
   srand(atoi(argv[1])); // srand sets the random seed
   int n = atoi(argv[2]);
   int x = n;
+  int t = 1;
 
-  cout << n << "\n";
+  cout << t << "\n";
 
-  for (int i = 0; i < n; i++) {
-    cout << rand() % x << " ";
+  for (int k = 0; k < t; k++) {
+    cout << n << "\n";
+
+    for (int i = 0; i < n; i++) {
+      cout << rand() % x << " ";
+    }
+    cout << "\n";
   }
-  cout << "\n";
 
   //   int lower = 1 + rand() % x;
   //   int upper = max(lower, 1 + rand() % x);
