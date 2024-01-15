@@ -101,7 +101,7 @@ void build(int a[], int v = 1, int tl = 1, int tr = n) {
   if (tl == tr) {
     t[v].first = a[tl];
     t[v].second[a[tl]] = {0, 1};
-    cout << "hmm:" << t[v].first << "\n";
+    // cout << "hmm:" << t[v].first << "\n";
     return;
   }
   ll tm = (tl + tr) >> 1;
@@ -182,23 +182,70 @@ void build(int a[], int v = 1, int tl = 1, int tr = n) {
 // }
 //
 // // queries
-unsigned int sum(ll l, ll r, ll v = 1, ll L = 1, ll R = n) {
-  if (L > R)
-    return 0;
+pair<int, unordered_map<int, pair<int, int>>> sum(ll l, ll r, ll v = 1,
+                                                  ll L = 1, ll R = n) {
+  if (L > R) {
+    cout << L << "\n";
+    pair<int, unordered_map<int, pair<int, int>>> h{};
+    return h;
+  }
   if (l == L && r == R) {
-    return t[v].second[t[v].first].second;
+    return t[v];
   }
   ll mid = (l + r) >> 1;
+  cout << v << "\n";
+  pair<int, unordered_map<int, pair<int, int>>> q{};
+  pair<int, unordered_map<int, pair<int, int>>> y{};
 
-  unsigned int x, y;
+  auto x = sum(l, mid, v * 2, L, min(mid, R));
+  // y = sum(mid + 1, r, v * 2 + 1, max(mid + 1, L), R);
 
-  x = sum(l, mid, v * 2, L, min(mid, R));
-
-  y = sum(mid + 1, r, v * 2 + 1, max(mid + 1, L), R);
+  cout << "hoo\n";
 
   // Unsure how to combine here.
+  //
+  // int best_strength = x.first;
+  // int most_score = 0;
+  // if (x.first) {
+  //   most_score = x.second[best_strength].first;
+  // }
 
-  return x;
+  // for (pair<int, pair<int, int>> e : x.second) {
+  //   if (e.first == 0) {
+  //     continue;
+  //   }
+  //   // Add score, count etc from x
+  //   q.second[e.first] = e.second;
+  //
+  //   for (pair<int, pair<int, int>> f : y.second) {
+  //     if (f.first == 0) {
+  //       continue;
+  //     }
+  //     if (f.first % e.first == 0) {
+  //       // Increment score
+  //       q.second[e.first].first++;
+  //       if (q.second[e.first].first > most_score) {
+  //         best_strength = e.first;
+  //         most_score = q.second[e.first].first;
+  //       }
+  //     }
+  //     if (e.first % f.first == 0) {
+  //       q.second[f.first].first++;
+  //       if (q.second[f.first].first > most_score) {
+  //         best_strength = f.first;
+  //         most_score = q.second[f.first].first;
+  //       }
+  //     }
+  //   }
+  // }
+  //
+  // // Add count from y
+  // for (auto f : y.second) {
+  //   q.second[f.first].second += f.second.second;
+  // }
+  // q.first = best_strength;
+
+  return q;
 }
 
 void solution() {
@@ -218,16 +265,26 @@ void solution() {
     cin >> a[i];
   }
 
+  int m = 1, l = 2, r = 5;
+
   build(a);
+
+  auto q = sum(l, r);
+
+  ll ans = 0;
+
+  // ans = (r - l + 1) - q.second[q.first].second;
+
+  // cout << ans << "\n";
   // Cant print somehow!
   // Once I know how I have built my segment tree,
   // Then I can build my query.
   // Otherwise I will code in the dark.
-  cout << t[1].first << "\n";
-  for (auto e : t[1].second) {
-    cout << e.first << ", score=" << e.second.first
-         << " , count=" << e.second.second << "\n";
-  }
+  // cout << q.first << "\n";
+  // for (auto e : q.second) {
+  //   cout << e.first << ", score=" << e.second.first
+  //        << " , count=" << e.second.second << "\n";
+  // }
 
   // {best_strength, {strength: {score, count}}}
   // vector<pair<int, unordered_map<int, pair<int, int>>>> t(maxN * 4);
