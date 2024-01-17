@@ -90,8 +90,15 @@ template <class Os, class K> Os &operator<<(Os &os, const std::multiset<K> &v) {
 // const int maxN = 100'013;
 const int maxN = 10;
 int n;
-// {best_strength, {strength: {score, count}}}
-vector<pair<int, unordered_map<int, pair<int, int>>>> t(maxN * 4);
+// {smallest, gcd, {strength: count}}
+vector<pair<pair<ll, ll>, unordered_map<ll, ll>>> t(maxN * 4);
+
+void init(int L = 1, int R = maxN * 4) {
+  for (; L < R; L++) {
+    t[L].first.first = MAX_VAL;
+    t[L].first.second = MAX_VAL;
+  }
+}
 
 // build
 void build(int a[], int v = 1, int tl = 1, int tr = n) {
@@ -99,9 +106,12 @@ void build(int a[], int v = 1, int tl = 1, int tr = n) {
     return;
   }
   if (tl == tr) {
-    t[v].first = a[tl];
-    t[v].second[a[tl]] = {0, 1};
-    // cout << "hmm:" << t[v].first << "\n";
+    // smallest and gcd is itself.
+    t[v].first.first = a[tl];
+    t[v].first.second = a[tl];
+
+    // count is 1
+    t[v].second.emplace(a[tl], 1);
     return;
   }
   ll tm = (tl + tr) >> 1;
@@ -109,49 +119,22 @@ void build(int a[], int v = 1, int tl = 1, int tr = n) {
   build(a, v * 2, tl, tm);
   build(a, v * 2 + 1, tm + 1, tr);
 
-  // Need to check for each e.first in t[2*v].second
-  // If any e.first divides any f.first in t[2*v+1].second
-  // (key, value pair where keys are strength), thus first.
   auto x = t[2 * v];
   auto y = t[2 * v + 1];
 
-  int best_strength = t[v].first;
-  int most_score = t[v].second[best_strength].first;
+  // gcd of the gcds.
+  t[v].first.first = gcd(x.first.second, y.first.second);
+  t[v].first.second = min(x.first.first, y.first.first);
 
-  for (pair<int, pair<int, int>> e : x.second) {
-    if (e.first == 0) {
-      continue;
-    }
-    // Add score, count etc from x
-    t[v].second[e.first] = e.second;
-
-    for (pair<int, pair<int, int>> f : y.second) {
-      if (f.first == 0) {
-        continue;
-      }
-      if (f.first % e.first == 0) {
-        // Increment score
-        t[v].second[e.first].first++;
-        if (t[v].second[e.first].first > most_score) {
-          best_strength = e.first;
-          most_score = t[v].second[e.first].first;
-        }
-      }
-      if (e.first % f.first == 0) {
-        t[v].second[f.first].first++;
-        if (t[v].second[f.first].first > most_score) {
-          best_strength = f.first;
-          most_score = t[v].second[f.first].first;
-        }
-      }
-    }
+  for (pair<ll, ll> e : x.second) {
+    // Add count from x
+    t[v].second[e.first] += e.second;
   }
 
   // Add count from y
-  for (auto f : y.second) {
-    t[v].second[f.first].second += f.second.second;
+  for (pair<ll, ll> f : y.second) {
+    t[v].second[f.first] += f.second;
   }
-  t[v].first = best_strength;
 }
 
 // update
@@ -182,25 +165,37 @@ void build(int a[], int v = 1, int tl = 1, int tr = n) {
 // }
 //
 // // queries
-pair<int, unordered_map<int, pair<int, int>>> sum(ll l, ll r, ll v = 1,
-                                                  ll L = 1, ll R = n) {
+
+// {smallest, gcd, {strength: count}}
+// vector<pair<pair<ll, ll>, unordered_map<ll, ll>>> t(maxN * 4);
+tuple<ll, ll, ll> sum(ll l, ll r, ll v = 1, ll L = 1, ll R = n) {
   if (L > R) {
-    cout << L << "\n";
-    pair<int, unordered_map<int, pair<int, int>>> h{};
-    return h;
+    return make_tuple(0, 0, 0);
   }
-  if (l == L && r == R) {
-    return t[v];
+  if (l == r) {
+    return make_tuple(t[v].first.first, t[v].first.second,
+                      t[v].second[t[v].first.second]);
   }
   ll mid = (l + r) >> 1;
-  cout << v << "\n";
-  pair<int, unordered_map<int, pair<int, int>>> q{};
-  pair<int, unordered_map<int, pair<int, int>>> y{};
+  cout << l << " " << r << " " << mid << " " << v << "\n";
+  cout << L << " " << R << "\n";
 
-  auto x = sum(l, mid, v * 2, L, min(mid, R));
-  // y = sum(mid + 1, r, v * 2 + 1, max(mid + 1, L), R);
+  // if (v == 0) {
+  //   return {0, 0, 0};
+  // }
 
-  cout << "hoo\n";
+  // {smallest, gcd, count}
+  auto [smallest_x, gcd_x, count_x] = sum(l, mid, v * 2, L, min(mid, R));
+  auto [smallest_y, gcd_y, count_y] =
+      sum(mid + 1, r, v * 2 + 1, max(mid + 1, L), R);
+
+  if (smallest_x == smallest_y) {
+    return make_tuple(smallest_x, gcd(gcd_x, gcd_y), count_x + count_y);
+  } else if ((smallest_x < smallest_y && smallest_x > 0) || smallest_y == 0) {
+    return make_tuple(smallest_x, gcd(gcd_x, gcd_y), count_x);
+  } else {
+    return make_tuple(smallest_y, gcd(gcd_x, gcd_y), count_y);
+  }
 
   // Unsure how to combine here.
   //
@@ -244,8 +239,6 @@ pair<int, unordered_map<int, pair<int, int>>> sum(ll l, ll r, ll v = 1,
   //   q.second[f.first].second += f.second.second;
   // }
   // q.first = best_strength;
-
-  return q;
 }
 
 void solution() {
@@ -265,11 +258,19 @@ void solution() {
     cin >> a[i];
   }
 
-  int m = 1, l = 2, r = 5;
+  init();
 
+  int m = 1, l = 3, r = 5;
+
+  // {smallest, gcd, count}
   build(a);
 
-  auto q = sum(l, r);
+  // vector<pair<pair<ll, ll>, unordered_map<ll, ll>>> t(maxN * 4);
+  // pair<pair<ll, ll>, unordered_map<ll, ll>>
+  for (auto e : t) {
+    cout << "smallest=" << e.first.first << " gcd=" << e.first.second << "\n";
+    cout << "count=" << e.second[e.first.first] << "\n";
+  }
 
   ll ans = 0;
 
@@ -280,7 +281,10 @@ void solution() {
   // Once I know how I have built my segment tree,
   // Then I can build my query.
   // Otherwise I will code in the dark.
-  // cout << q.first << "\n";
+  auto [smallest, gcd_q, count_q] = sum(l, r);
+  cout << smallest << "\n";
+  cout << gcd_q << "\n";
+  cout << count_q << "\n";
   // for (auto e : q.second) {
   //   cout << e.first << ", score=" << e.second.first
   //        << " , count=" << e.second.second << "\n";
