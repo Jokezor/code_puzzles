@@ -237,6 +237,20 @@ void solution() {
   //
   // Solve it
   cin >> n;
+  ll squares = 0;
+
+  for (int i = 0; i < n; i++) {
+    ll a;
+    cin >> a;
+    squares += a;
+  }
+
+  if (floor(sqrt(squares)) * floor(sqrt(squares)) == squares) {
+    cout << "YES\n";
+    return;
+  }
+
+  cout << "NO\n";
 }
 
 int main() {

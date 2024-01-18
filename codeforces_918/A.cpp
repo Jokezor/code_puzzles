@@ -236,7 +236,10 @@ void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
-  cin >> n;
+  int a, b, c;
+  cin >> a >> b >> c;
+
+  cout << (a ^ b ^ c) << "\n";
 }
 
 int main() {

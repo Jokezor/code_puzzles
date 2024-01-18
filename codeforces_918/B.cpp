@@ -236,7 +236,27 @@ void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
-  cin >> n;
+
+  vector<string> m(3);
+
+  for (int i = 0; i < 3; i++) {
+    cin >> m[i];
+  }
+  for (string s : m) {
+    set<char> chars = {'A', 'B', 'C'};
+
+    for (char c : s) {
+      if (c == '?') {
+        continue;
+      } else {
+        chars.erase(c);
+      }
+    }
+    if (chars.size() == 1) {
+      cout << *chars.begin() << "\n";
+      return;
+    }
+  }
 }
 
 int main() {

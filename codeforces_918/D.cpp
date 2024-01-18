@@ -232,11 +232,62 @@ template <class Os, class K> Os &operator<<(Os &os, const std::multiset<K> &v) {
 //   }
 // }
 
+unordered_set<char> V = {'a', 'e'};
+unordered_set<char> C = {'b', 'c', 'd'};
+
+string get_syllable(string s) {
+  string type = "";
+
+  for (char c : s) {
+    if (C.find(c) != C.end()) {
+      type += "C";
+    }
+    if (V.find(c) != C.end()) {
+      type += "V";
+    }
+  }
+
+  return type;
+}
+
 void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
   cin >> n;
+
+  string s;
+  cin >> s;
+
+  stack<string> s_stack;
+  string s_copy = "";
+  int i = n - 1;
+
+  while (i >= 1) {
+    string s_local = "";
+
+    string CV_candidate = s.substr(i - 1, 2);
+
+    if (i > 1) {
+      string CVC_candidate = s.substr(i - 2, 3);
+      if (get_syllable(CVC_candidate) == "CVC") {
+        s_stack.push(CVC_candidate + ".");
+        i -= 3;
+      } else {
+        s_stack.push(CV_candidate + ".");
+        i -= 2;
+      }
+    } else {
+      s_stack.push(CV_candidate + ".");
+      i -= 2;
+    }
+  }
+
+  while (!s_stack.empty()) {
+    s_copy += s_stack.top();
+    s_stack.pop();
+  }
+  cout << s_copy.substr(0, s_copy.length() - 1) << "\n";
 }
 
 int main() {

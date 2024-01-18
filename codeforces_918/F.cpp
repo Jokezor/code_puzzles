@@ -3,13 +3,21 @@
 #include <bits/stdc++.h>
 #include <string>
 
+#include <ext/pb_ds/assoc_container.hpp> // Common file
+#include <ext/pb_ds/tree_policy.hpp> // Including tree_order_statistics_node_update
+
+using namespace std;
+
 #define ll long long
 #define all(x) x.begin(), x.end()
 #define MIN(v) *min_element(all(v))
 #define MAX(v) *max_element(all(v))
 #define LB(c, x) distance((c).begin(), lower_bound(all(c), (x)))
 
-using namespace std;
+typedef __gnu_pbds::tree<int, __gnu_pbds::null_type, less<int>,
+                         __gnu_pbds::rb_tree_tag,
+                         __gnu_pbds::tree_order_statistics_node_update>
+    ordered_set;
 
 ll MAX_VAL = (ll)(1e9 + 7);
 
@@ -237,6 +245,24 @@ void solution() {
   //
   // Solve it
   cin >> n;
+  ll ans = 0;
+
+  vector<pair<ll, ll>> arr(n);
+  for (auto &p : arr) {
+    // So that we can sort on b.
+    cin >> p.second >> p.first;
+  }
+
+  sort(arr.begin(), arr.end());
+
+  ordered_set st;
+
+  for (auto p : arr) {
+    ans += st.size() - st.order_of_key(p.second);
+    st.insert(p.second);
+  }
+
+  cout << ans << "\n";
 }
 
 int main() {
