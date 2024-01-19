@@ -90,15 +90,8 @@ template <class Os, class K> Os &operator<<(Os &os, const std::multiset<K> &v) {
 // const int maxN = 100'013;
 const int maxN = 100000;
 int n;
-// {smallest, gcd, {strength: count}}
-vector<tuple<ll, ll, ll>> t(maxN * 4);
-
-void init(int L = 1, int R = maxN * 4) {
-  for (; L < R; L++) {
-    get<0>(t[L]) = MAX_VAL;
-    get<1>(t[L]) = MAX_VAL;
-  }
-}
+// {smallest, gcd, count}
+vector<ll> t(maxN * 4);
 
 // build
 void build(int a[], int v = 1, int tl = 1, int tr = n) {
@@ -106,10 +99,7 @@ void build(int a[], int v = 1, int tl = 1, int tr = n) {
     return;
   }
   if (tl == tr) {
-    // smallest and gcd is itself.
-    get<0>(t[v]) = a[tl];
-    get<1>(t[v]) = a[tl];
-    get<2>(t[v]) = 1;
+    t[v] = a[tl];
     return;
   }
   ll tm = (tl + tr) >> 1;
@@ -117,21 +107,7 @@ void build(int a[], int v = 1, int tl = 1, int tr = n) {
   build(a, v * 2, tl, tm);
   build(a, v * 2 + 1, tm + 1, tr);
 
-  auto x = t[2 * v];
-  auto y = t[2 * v + 1];
-
-  // gcd of the gcds.
-  if (get<0>(x) < get<0>(y)) {
-    get<0>(t[v]) = get<0>(x);
-    get<2>(t[v]) = get<2>(x);
-  } else if (get<0>(y) < get<0>(x)) {
-    get<0>(t[v]) = get<0>(y);
-    get<2>(t[v]) = get<2>(y);
-  } else {
-    get<0>(t[v]) = get<0>(x);
-    get<2>(t[v]) = get<2>(x) + get<2>(y);
-  }
-  get<1>(t[v]) = gcd(get<1>(x), get<1>(y));
+  t[v] = gcd(t[2 * v], t[2 * v + 1]);
 }
 
 // update
@@ -163,11 +139,11 @@ void build(int a[], int v = 1, int tl = 1, int tr = n) {
 //
 // // queries
 
-// {smallest, gcd, count}
+// {smallest, gcd, {strength: count}}
 // vector<pair<pair<ll, ll>, unordered_map<ll, ll>>> t(maxN * 4);
-tuple<ll, ll, ll> sum(ll l, ll r, ll v = 1, ll L = 1, ll R = n) {
+ll sum(ll l, ll r, ll v = 1, ll L = 1, ll R = n) {
   if (R < l || r < L) {
-    return make_tuple(MAX_VAL, 0, 0);
+    return 0;
   }
   if (l <= L && R <= r) {
     return t[v];
@@ -181,59 +157,10 @@ tuple<ll, ll, ll> sum(ll l, ll r, ll v = 1, ll L = 1, ll R = n) {
   // }
 
   // {smallest, gcd, count}
-  auto [smallest_x, gcd_x, count_x] = sum(l, r, v * 2, L, mid);
-  auto [smallest_y, gcd_y, count_y] = sum(l, r, v * 2 + 1, mid + 1, R);
+  auto x = sum(l, r, v * 2, L, mid);
+  auto y = sum(l, r, v * 2 + 1, mid + 1, R);
 
-  if ((smallest_x < smallest_y && smallest_x > 0) || smallest_y == 0) {
-    return make_tuple(smallest_x, gcd(gcd_x, gcd_y), count_x);
-  } else if ((smallest_y < smallest_x && smallest_y > 0) || smallest_x == 0) {
-    return make_tuple(smallest_y, gcd(gcd_x, gcd_y), count_y);
-  } else {
-    return make_tuple(smallest_y, gcd(gcd_x, gcd_y), count_y + count_x);
-  }
-
-  // Unsure how to combine here.
-  //
-  // int best_strength = x.first;
-  // int most_score = 0;
-  // if (x.first) {
-  //   most_score = x.second[best_strength].first;
-  // }
-
-  // for (pair<int, pair<int, int>> e : x.second) {
-  //   if (e.first == 0) {
-  //     continue;
-  //   }
-  //   // Add score, count etc from x
-  //   q.second[e.first] = e.second;
-  //
-  //   for (pair<int, pair<int, int>> f : y.second) {
-  //     if (f.first == 0) {
-  //       continue;
-  //     }
-  //     if (f.first % e.first == 0) {
-  //       // Increment score
-  //       q.second[e.first].first++;
-  //       if (q.second[e.first].first > most_score) {
-  //         best_strength = e.first;
-  //         most_score = q.second[e.first].first;
-  //       }
-  //     }
-  //     if (e.first % f.first == 0) {
-  //       q.second[f.first].first++;
-  //       if (q.second[f.first].first > most_score) {
-  //         best_strength = f.first;
-  //         most_score = q.second[f.first].first;
-  //       }
-  //     }
-  //   }
-  // }
-  //
-  // // Add count from y
-  // for (auto f : y.second) {
-  //   q.second[f.first].second += f.second.second;
-  // }
-  // q.first = best_strength;
+  return gcd(x, y);
 }
 
 void solution() {
@@ -246,34 +173,52 @@ void solution() {
   // 1 1
   // 1 1
 
+  ll ans = 0;
+
   cin >> n;
 
   int a[n + 1];
+  vector<pair<ll, ll>> b(n + 1);
+
   for (int i = 1; i <= n; i++) {
     cin >> a[i];
+    b[i] = make_pair(a[i], i);
   }
 
-  init();
+  sort(b.begin(), b.end());
   build(a);
 
   int m = 1, l = 4, r = 5;
-
   cin >> m;
 
   for (int i = 0; i < m; ++i) {
-    ll winners = 0;
     cin >> l >> r;
-    auto [smallest, gcd_q, count_q] = sum(l, r);
+    auto gcd_q = sum(l, r);
 
-    // cout << smallest << " " << gcd_q << " " << count_q << "\n";
+    // Finds the first entry of gcd_q.
+    pair<ll, ll> p = make_pair(gcd_q, l);
 
-    if (gcd_q == smallest) {
-      winners = count_q;
-    }
-    cout << (r - l + 1) - winners << "\n";
+    ll from = (lower_bound(b.begin(), b.end(), p) - b.begin());
+
+    // Finds the last entry of gcd_q
+    p = make_pair(gcd_q, r + 1);
+    ll to = (lower_bound(b.begin(), b.end(), p) - b.begin());
+
+    ll winners = to - from;
+    // count is the distance between first and last occurance.
+    // Whole range length - count
+    cout << ((r - l + 1) - winners) << "\n";
   }
 
   // {smallest, gcd, count}
+
+  // vector<pair<pair<ll, ll>, unordered_map<ll, ll>>> t(maxN * 4);
+  // pair<pair<ll, ll>, unordered_map<ll, ll>>
+  // for (auto e : t) {
+  //   cout << "gcd=" << e << "\n";
+  // }
+
+  // ans = (r - l + 1) - q.second[q.first].second;
 }
 
 int main() {
