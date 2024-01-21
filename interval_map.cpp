@@ -2,10 +2,99 @@
 #include "catch.hpp"
 #include <iostream>
 #include <limits>
+#include <map>
 #include <string>
 #include <type_traits>
 
-#include <map>
+#if USE_TIMER
+#define MEASURE_FUNCTION()                                                     \
+  ScopedTimer timer { __func__ }
+#else
+#define MEASURE_FUNCTION()
+#endif
+
+class ScopedTimer {
+public:
+  using ClockType = std::chrono::steady_clock;
+  ScopedTimer(const char *func)
+      : function_name_{func}, start_{ClockType::now()} {}
+  ScopedTimer(const ScopedTimer &) = delete;
+  ScopedTimer(ScopedTimer &&) = delete;
+  auto operator=(const ScopedTimer &) -> ScopedTimer & = delete;
+  auto operator=(ScopedTimer &&) -> ScopedTimer & = delete;
+  ~ScopedTimer() {
+    using namespace std::chrono;
+    auto stop = ClockType::now();
+    auto duration = (stop - start_);
+    auto ms = duration_cast<milliseconds>(duration).count();
+    std::cout << ms << " ms " << function_name_ << '\n';
+  }
+
+private:
+  const char *function_name_{};
+  const ClockType::time_point start_{};
+};
+
+template <typename K, typename V> class interval_map_slow {
+  friend void IntervalMapTest();
+  V m_valBegin;
+
+public:
+  // constructor associates whole range of K with val
+  interval_map_slow(V const &val) : m_valBegin(val) {}
+  std::map<K, V> m_map;
+
+  // Assign value val to interval [keyBegin, keyEnd).
+  // Overwrite previous values in this interval.
+  // Conforming to the C++ Standard Library conventions, the interval
+  // includes keyBegin, but excludes keyEnd.
+  // If !( keyBegin < keyEnd ), this designates an empty interval,
+  // and assign must do nothing.
+  void assign(K const &keyBegin, K const &keyEnd, V const &val) {
+    // Empty range, do nothing.
+    if (!(keyBegin < keyEnd)) {
+      return;
+    }
+
+    // Lookup current value at end.
+    auto endVal = (*this)[keyEnd];
+
+    // Erase existing entries in interval
+    auto itlow = m_map.lower_bound(keyBegin);
+    auto ithi = m_map.upper_bound(keyEnd);
+
+    m_map.erase(itlow, ithi);
+
+    // Check if the value is already covered.
+    bool hasValBegin = (*this)[keyBegin] == val;
+
+    // Revalidate iterators after erase in map.
+    itlow = m_map.lower_bound(keyBegin);
+    ithi = m_map.upper_bound(keyEnd);
+
+    // Only assign if not the default, as its already covering the range.
+    if ((val != m_valBegin || itlow != m_map.begin()) && !hasValBegin) {
+      // Assign beginning of interval with val
+      m_map.emplace(keyBegin, val);
+    }
+
+    // Mark the end of this interval
+    if ((endVal != m_valBegin || ithi != m_map.begin()) && endVal != val) {
+      m_map.emplace(keyEnd, endVal);
+    }
+  }
+
+  // look-up of the value associated with key
+  V const &operator[](K const &key) const {
+    auto it = m_map.upper_bound(key);
+    if (it == m_map.begin()) {
+      return m_valBegin;
+    } else {
+      return (--it)->second;
+    }
+  }
+};
+
 template <typename K, typename V> class interval_map {
   friend void IntervalMapTest();
   V m_valBegin;
@@ -46,7 +135,7 @@ public:
     // Only assign if not the default, as its already covering the range.
     if ((val != m_valBegin || itlow != m_map.begin()) && !hasValBegin) {
       // Assign beginning of interval with val
-      m_map.emplace_hint(itlow, keyBegin, val);
+      m_map.emplace_hint(ithi, keyBegin, val);
     }
 
     // Mark the end of this interval
@@ -399,4 +488,30 @@ TEST_CASE("VeryComplex") {
   REQUIRE(m[5] == 'A');
   REQUIRE(m[6] == 'A');
   REQUIRE(m[7] == 'A');
+}
+
+TEST_CASE("BenchmarkFast") {
+  ScopedTimer timer{"benchmark fast"};
+
+  interval_map<TestKeyType, TestValueType> m('A');
+  constexpr int runs = 1000000;
+
+  for (int i = 0; i < runs; ++i) {
+    int low = rand() % runs;
+    int high = low + rand() % runs;
+    m.assign(low, high, 'A' + rand() % 25);
+  }
+}
+
+TEST_CASE("BenchmarkSlow") {
+  ScopedTimer timer{"benchmark slow"};
+
+  interval_map_slow<TestKeyType, TestValueType> m('A');
+  constexpr int runs = 1000000;
+
+  for (int i = 0; i < runs; ++i) {
+    int low = rand() % runs;
+    int high = low + rand() % runs;
+    m.assign(low, high, 'A' + rand() % 25);
+  }
 }
