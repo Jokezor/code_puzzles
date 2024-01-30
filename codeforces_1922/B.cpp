@@ -122,7 +122,7 @@ struct hash_pair {
   }
 };
 
-const int maxN = 200013;
+const int maxN = 1000;
 int n;
 
 vector<ll> p;
@@ -278,6 +278,26 @@ void solution() {
   // Solve it
   cin >> n;
   ll ans = 0;
+
+  vector<ll> a(n);
+  vector<ll> count(n + 1);
+
+  for (int i = 0; i < n; ++i) {
+    cin >> a[i];
+    ++count[a[i]];
+  }
+
+  ll sum = 0;
+
+  for (ll cnt : count) {
+    if (cnt >= 3) {
+      ans += cnt * (cnt - 1) * (cnt - 2) / 6; // binomial. (cnt-3)*...2 is gone.
+    }
+    if (cnt >= 2) {
+      ans += (cnt * (cnt - 1) / 2) * sum;
+    }
+    sum += cnt;
+  }
 
   cout << ans << "\n";
 }

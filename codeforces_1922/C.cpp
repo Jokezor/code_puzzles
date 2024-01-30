@@ -19,7 +19,7 @@ typedef __gnu_pbds::tree<int, __gnu_pbds::null_type, less<int>,
                          __gnu_pbds::tree_order_statistics_node_update>
     ordered_set;
 
-ll MAX_VAL = (ll)(1e9 + 7);
+ll MAX_VAL = (ll)(1e11 + 7);
 
 bool USE_TIMER = true;
 
@@ -122,7 +122,7 @@ struct hash_pair {
   }
 };
 
-const int maxN = 200013;
+const int maxN = 100005;
 int n;
 
 vector<ll> p;
@@ -272,14 +272,90 @@ template <class Os, class K> Os &operator<<(Os &os, const std::multiset<K> &v) {
 //   }
 // }
 
+char type(const vector<ll> &a, int id) {
+  int distL = (id == 0 ? MAX_VAL : a[id] - a[id - 1]);
+  int distR = (id + 1 == a.size() ? MAX_VAL : a[id + 1] - a[id]);
+  if (distL < distR)
+    return 'L';
+  if (distL > distR)
+    return 'R';
+  assert(false);
+}
+
 void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
   cin >> n;
-  ll ans = 0;
 
-  cout << ans << "\n";
+  vector<ll> a(n);
+
+  for (int i = 0; i < n; ++i) {
+    cin >> a[i];
+  }
+
+  vector<ll> closest(n);
+  for (int i = 0; i < n; ++i) {
+    ll left = MAX_VAL;
+    ll right = MAX_VAL;
+    if (i > 0) {
+      left = a[i] - a[i - 1];
+    }
+    if (i < n - 1) {
+      right = a[i + 1] - a[i];
+    }
+
+    if (left < right) {
+      closest[i] = i - 1;
+      continue;
+    } else if (right < left) {
+      closest[i] = i + 1;
+      continue;
+    }
+    assert(false);
+  }
+
+  vector<ll> r(n);
+  for (int i = 1; i < n; ++i) {
+    // r[i] = r[i - 1] + (type(a, i - 1) == 'R' ? 1 : a[i] - a[i - 1]);
+    r[i] = r[i - 1];
+    if (i == closest[i - 1]) {
+      r[i]++;
+    } else {
+      r[i] += a[i] - a[i - 1];
+    }
+  }
+
+  vector<ll> l(n);
+  for (int i = n - 2; i >= 0; --i) {
+    // l[i] = l[i + 1] + (type(a, i + 1) == 'L' ? 1 : a[i + 1] - a[i]);
+    l[i] = l[i + 1];
+    if (i == closest[i + 1]) {
+      l[i]++;
+    } else {
+      l[i] += a[i + 1] - a[i];
+    }
+  }
+
+  int m;
+
+  cin >> m;
+
+  for (int i = 0; i < m; ++i) {
+    ll x, y, ans;
+    cin >> x >> y;
+
+    x--;
+    y--;
+
+    if (x < y) {
+      ans = r[y] - r[x];
+    } else {
+      ans = l[y] - l[x];
+    }
+
+    cout << ans << "\n";
+  }
 }
 
 int main() {
