@@ -19,7 +19,7 @@ typedef __gnu_pbds::tree<int, __gnu_pbds::null_type, less<int>,
                          __gnu_pbds::tree_order_statistics_node_update>
     ordered_set;
 
-ll MAX_VAL = (ll)(1e9 + 7);
+ll MAX_VAL = (ll)(1e11 + 7);
 
 bool USE_TIMER = true;
 
@@ -122,7 +122,7 @@ struct hash_pair {
   }
 };
 
-const int maxN = 1000;
+const int maxN = 100005;
 int n;
 
 vector<ll> p;
@@ -277,35 +277,71 @@ void solution() {
   //
   // Solve it
   cin >> n;
-  ll ans = 0;
 
   vector<ll> a(n);
-  vector<ll> count(n + 1);
+  vector<ll> d(n);
 
   for (int i = 0; i < n; ++i) {
     cin >> a[i];
-    ++count[a[i]];
   }
 
-  ll sum = 0;
-
-  for (ll cnt : count) {
-    if (cnt >= 3) {
-      // cnt choose 3.
-      // cnt! / (3!*(cnt-3)!) = cnt*(cnt-1)*(cnt-2)/6.
-      ans += cnt * (cnt - 1) * (cnt - 2) / 6; // binomial. (cnt-3)*...2 is gone.
-    }
-    if (cnt >= 2) {
-      // cnt choose 2.
-      // cnt!/(2!*(cnt-2)!) = cnt*(cnt-1)/2!
-      // Then multiply by how many smaller can be slotted in
-      // for the single position.
-      ans += (cnt * (cnt - 1) / 2) * sum;
-    }
-    sum += cnt;
+  for (int i = 0; i < n; ++i) {
+    cin >> d[i];
   }
 
-  cout << ans << "\n";
+  ll died = 0;
+  unordered_set<ll> dead;
+  int rounds = 0;
+
+  do {
+    auto d_copy = d;
+    died = 0;
+    for (int i = 0; i < n; ++i) {
+      // Get first right
+      int right = -1;
+      for (int j = 1; i + j < n; ++j) {
+        if (d[i + j] > 0) {
+          right = i + j;
+          break;
+        }
+      }
+      if (right != -1) {
+        d_copy[right] -= a[i];
+        if (d_copy[right] < 0 && dead.find(right) == dead.end()) {
+          d[right] = -1;
+          dead.insert(right);
+          died++;
+        }
+      }
+
+      // Get first left
+      int left = -1;
+      for (int j = i - 1; j > 0; --j) {
+        if (d[j] > 0) {
+          left = j;
+          break;
+        }
+      }
+      if (left != -1) {
+        d_copy[left] -= a[i];
+        if (d_copy[left] < 0 && dead.find(left) == dead.end()) {
+          d[left] = -1;
+          dead.insert(left);
+          died++;
+        }
+      }
+    }
+    cout << died << " ";
+    rounds++;
+
+  } while (died > 0);
+
+  if (rounds < n) {
+    for (int i = rounds; i < n - 1; ++i) {
+      cout << 0 << " ";
+    }
+    cout << "0\n";
+  }
 }
 
 int main() {
