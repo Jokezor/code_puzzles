@@ -295,8 +295,11 @@ void solution() {
 
   do {
     auto d_copy = d;
-    died = 0;
+    died = dead.size();
     for (int i = 0; i < n; ++i) {
+      if (dead.find(i) != dead.end()) {
+        continue;
+      }
       // Get first right
       int right = -1;
       for (int j = 1; i + j < n; ++j) {
@@ -307,16 +310,11 @@ void solution() {
       }
       if (right != -1) {
         d_copy[right] -= a[i];
-        if (d_copy[right] < 0 && dead.find(right) == dead.end()) {
-          d[right] = -1;
-          dead.insert(right);
-          died++;
-        }
       }
 
       // Get first left
       int left = -1;
-      for (int j = i - 1; j > 0; --j) {
+      for (int j = i - 1; j >= 0; --j) {
         if (d[j] > 0) {
           left = j;
           break;
@@ -324,17 +322,20 @@ void solution() {
       }
       if (left != -1) {
         d_copy[left] -= a[i];
-        if (d_copy[left] < 0 && dead.find(left) == dead.end()) {
-          d[left] = -1;
-          dead.insert(left);
-          died++;
-        }
       }
     }
-    cout << died << " ";
+    // Copy over all died.
+    for (int k = 0; k < n; ++k) {
+      if (d_copy[k] < 0 && dead.find(k) == dead.end()) {
+        d[k] = -1;
+        dead.insert(k);
+      }
+    }
     rounds++;
 
-  } while (died > 0);
+    cout << dead.size() - died << ((rounds < n) ? " " : "\n");
+
+  } while (dead.size() - died > 0);
 
   if (rounds < n) {
     for (int i = rounds; i < n - 1; ++i) {

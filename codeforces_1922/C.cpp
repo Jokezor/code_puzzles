@@ -272,16 +272,6 @@ template <class Os, class K> Os &operator<<(Os &os, const std::multiset<K> &v) {
 //   }
 // }
 
-char type(const vector<ll> &a, int id) {
-  int distL = (id == 0 ? MAX_VAL : a[id] - a[id - 1]);
-  int distR = (id + 1 == a.size() ? MAX_VAL : a[id + 1] - a[id]);
-  if (distL < distR)
-    return 'L';
-  if (distL > distR)
-    return 'R';
-  assert(false);
-}
-
 void solution() {
   // ScopedTimer timer{"solution"};
   //
@@ -317,7 +307,6 @@ void solution() {
 
   vector<ll> r(n);
   for (int i = 1; i < n; ++i) {
-    // r[i] = r[i - 1] + (type(a, i - 1) == 'R' ? 1 : a[i] - a[i - 1]);
     r[i] = r[i - 1];
     if (i == closest[i - 1]) {
       r[i]++;
@@ -328,7 +317,6 @@ void solution() {
 
   vector<ll> l(n);
   for (int i = n - 2; i >= 0; --i) {
-    // l[i] = l[i + 1] + (type(a, i + 1) == 'L' ? 1 : a[i + 1] - a[i]);
     l[i] = l[i + 1];
     if (i == closest[i + 1]) {
       l[i]++;
