@@ -290,49 +290,33 @@ void solution() {
   }
 
   ll died = 0;
+  set<ll> alive;
+
+  for (int i = 0; i < n; ++i) {
+    alive.insert(i);
+  }
   unordered_set<ll> dead;
   int rounds = 0;
 
   do {
-    auto d_copy = d;
-    died = dead.size();
-    for (int i = 0; i < n; ++i) {
-      if (dead.find(i) != dead.end()) {
-        continue;
-      }
-      // Get first right
-      int right = -1;
-      for (int j = 1; i + j < n; ++j) {
-        if (d[i + j] > 0) {
-          right = i + j;
-          break;
-        }
-      }
-      if (right != -1) {
-        d_copy[right] -= a[i];
-      }
+    unordered_map<ll, ll> attacks;
 
-      // Get first left
-      int left = -1;
-      for (int j = i - 1; j >= 0; --j) {
-        if (d[j] > 0) {
-          left = j;
-          break;
-        }
-      }
-      if (left != -1) {
-        d_copy[left] -= a[i];
-      }
+    for (auto m : alive) {
+      auto m_it = alive.find(m);
+
+      assert(m_it != alive.end()); // should always be found.
+      *m_it--;
+
+      auto it_left = upper_bound(alive.begin(), m_it, m);
+      *m_it++;
+      *m_it++;
+      auto it_right = lower_bound(m_it, alive.end(), m);
+
+      cout << *it_left << ", " << *it_right << "\n";
     }
-    // Copy over all died.
-    for (int k = 0; k < n; ++k) {
-      if (d_copy[k] < 0 && dead.find(k) == dead.end()) {
-        d[k] = -1;
-        dead.insert(k);
-      }
-    }
+    break;
+
     rounds++;
-
     cout << dead.size() - died << ((rounds < n) ? " " : "\n");
 
   } while (dead.size() - died > 0);
