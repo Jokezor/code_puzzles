@@ -290,36 +290,55 @@ void solution() {
   }
 
   ll died = 0;
-  set<ll> alive;
+  vector<ll> can_die;
 
   for (int i = 0; i < n; ++i) {
-    alive.insert(i);
+    can_die.push_back(i);
   }
-  unordered_set<ll> dead;
   int rounds = 0;
 
   do {
-    unordered_map<ll, ll> attacks;
+    vector<ll> round_can_die;
+    for (auto m : can_die) {
+      auto m_it = lower_bound(can_die.begin(), can_die.end(), m);
 
-    for (auto m : alive) {
-      auto m_it = alive.find(m);
+      assert(m_it != can_die.end()); // should always be found.
 
-      assert(m_it != alive.end()); // should always be found.
-      *m_it--;
+      auto it_left = can_die.end();
 
-      auto it_left = upper_bound(alive.begin(), m_it, m);
-      *m_it++;
-      *m_it++;
-      auto it_right = lower_bound(m_it, alive.end(), m);
+      if (m_it != can_die.begin()) {
+        it_left = prev(m_it);
+      }
+      auto it_right = upper_bound(can_die.begin(), can_die.end(), m);
 
-      cout << *it_left << ", " << *it_right << "\n";
+      // cout << m << ":\n";
+      // cout << *it_left << ", " << *it_right << "\n";
+      ll damage = 0;
+      if (it_left != can_die.end()) {
+        damage += a[*it_left];
+      }
+      if (it_right != can_die.end()) {
+        damage += a[*it_right];
+      }
+
+      // cout << "damage: " << damage << "\n";
+
+      if (d[m] < damage) {
+        if (it_left != can_die.end()) {
+          round_can_die.push_back(*it_left);
+        }
+        if (it_right != can_die.end()) {
+          round_can_die.push_back(*it_right);
+        }
+        died++;
+      }
     }
-    break;
 
     rounds++;
-    cout << dead.size() - died << ((rounds < n) ? " " : "\n");
+    can_die = round_can_die;
+    cout << died << ((rounds < n) ? " " : "\n");
 
-  } while (dead.size() - died > 0);
+  } while (died > 0);
 
   if (rounds < n) {
     for (int i = rounds; i < n - 1; ++i) {
