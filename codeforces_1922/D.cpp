@@ -278,73 +278,60 @@ void solution() {
   // Solve it
   cin >> n;
 
-  vector<ll> a(n);
-  vector<ll> d(n);
+  vector<ll> a(n + 2);
+  vector<ll> d(n + 2, MAX_VAL);
 
-  for (int i = 0; i < n; ++i) {
+  for (int i = 1; i <= n; ++i) {
     cin >> a[i];
   }
 
-  for (int i = 0; i < n; ++i) {
+  for (int i = 1; i <= n; ++i) {
     cin >> d[i];
   }
 
-  ll died = 0;
-  vector<ll> can_die;
+  set<ll> can_die;
+  set<ll> alive;
+
+  for (int i = 0; i < n + 2; ++i) {
+    can_die.insert(i);
+    alive.insert(i);
+  }
 
   for (int i = 0; i < n; ++i) {
-    can_die.push_back(i);
-  }
-  int rounds = 0;
-
-  do {
-    vector<ll> round_can_die;
+    set<ll> round_can_die, round_died;
     for (auto m : can_die) {
-      auto m_it = lower_bound(can_die.begin(), can_die.end(), m);
+      auto m_it = alive.find(m);
 
-      assert(m_it != can_die.end()); // should always be found.
-
-      auto it_left = can_die.end();
-
-      if (m_it != can_die.begin()) {
-        it_left = prev(m_it);
+      if (m_it == alive.end()) {
+        continue;
       }
-      auto it_right = upper_bound(can_die.begin(), can_die.end(), m);
 
-      // cout << m << ":\n";
-      // cout << *it_left << ", " << *it_right << "\n";
+      auto it_left = prev(m_it);
+      auto it_right = next(m_it);
+
       ll damage = 0;
-      if (it_left != can_die.end()) {
+      if (it_left != alive.end()) {
         damage += a[*it_left];
       }
-      if (it_right != can_die.end()) {
+      if (it_right != alive.end()) {
         damage += a[*it_right];
       }
 
-      // cout << "damage: " << damage << "\n";
-
       if (d[m] < damage) {
-        if (it_left != can_die.end()) {
-          round_can_die.push_back(*it_left);
-        }
-        if (it_right != can_die.end()) {
-          round_can_die.push_back(*it_right);
-        }
-        died++;
+        round_can_die.insert(*it_left);
+        round_can_die.insert(*it_right);
+        // Once died, we shoul not push it back from a neighbour.
+
+        round_died.insert(m);
       }
     }
 
-    rounds++;
-    can_die = round_can_die;
-    cout << died << ((rounds < n) ? " " : "\n");
-
-  } while (died > 0);
-
-  if (rounds < n) {
-    for (int i = rounds; i < n - 1; ++i) {
-      cout << 0 << " ";
+    for (ll m : round_died) {
+      alive.erase(m);
     }
-    cout << "0\n";
+
+    can_die = round_can_die;
+    cout << round_died.size() << ((i < n - 1) ? " " : "\n");
   }
 }
 
