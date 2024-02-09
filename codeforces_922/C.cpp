@@ -276,7 +276,37 @@ void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
-  cin >> n;
+  ll a, b, r;
+  cin >> a >> b >> r;
+
+  ll x = 0;
+
+  // MAke sure a < b.
+  if (a > b) {
+    swap(a, b);
+  }
+
+  // Get first diff bit
+  // 60 bit numbers (log2(10^18))= 60.
+  int max_bits = 60;
+  ll M = (1ll << max_bits);
+  bool first_bit_diff = true;
+
+  while (M) {
+    bool bit_a = a & M;
+    bool bit_b = b & M;
+
+    if (bit_a != bit_b) {
+      if (first_bit_diff) {
+        first_bit_diff = false;
+      } else if (!bit_a && x + M <= r) {
+        x += M;
+      }
+    }
+    M >>= 1;
+  }
+
+  cout << abs((a ^ x) - (b ^ x)) << "\n";
 }
 
 int main() {
