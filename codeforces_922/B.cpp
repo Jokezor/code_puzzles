@@ -290,8 +290,6 @@ void solution() {
   }
 
   // Sort b based on a
-  // Does which one we sort matter?
-
   vector<int> pa(n);
   iota(pa.begin(), pa.end(), 0);
 
@@ -308,28 +306,6 @@ void solution() {
 
   print(a);
   print(b);
-
-  // ll inversions = 0;
-  //
-  // for (int i = 0; i < n; ++i) {
-  //   for (int j = 1; i + j < n; ++j) {
-  //     if (a[i] > a[i + j]) {
-  //       inversions++;
-  //     }
-  //   }
-  // }
-  //
-  // cout << "inversion for a: " << inversions << "\n";
-  //
-  // for (int i = 0; i < n; ++i) {
-  //   for (int j = 1; i + j < n; ++j) {
-  //     if (b[i] > b[i + j]) {
-  //       inversions++;
-  //     }
-  //   }
-  // }
-  //
-  // cout << "inversion for b: " << inversions << "\n";
 }
 
 int main() {

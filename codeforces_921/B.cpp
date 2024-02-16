@@ -285,9 +285,11 @@ void solution() {
     if (x % i == 0) {
       // n less than x/i
       if (n <= x / i) {
+        // Choose i so that we can take multiples of i
         ans = max(ans, i);
       }
       if (n <= i) {
+        // We take multiples of x/i instead
         ans = max(ans, x / i);
       }
     }

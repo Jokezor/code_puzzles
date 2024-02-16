@@ -276,40 +276,33 @@ void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
-  ll a, b, r;
-  cin >> a >> b >> r;
+  cin >> n;
 
-  ll x = 0;
+  vector<ll> a(n);
 
-  // MAke sure a < b.
-  if (a > b) {
-    swap(a, b);
+  // 1 4 4 3 5 7 6
+  // 1 4 4 3 5 3 4 6
+  // 1 4 4 3 2 3 3 4 6
+  // 1 4 4 1 2 3 3 4 6
+  // 1 4 2 2 1 2 3 3 4 6
+  // 1 4 2 1 1 1 2 3 3 4 6
+  // 1 4 1 1 1 1 1 2 3 3 4 6
+  // 1 2 2 1 1 1 1 1 2 3 3 4 6
+  // 1 2 1 1 1 1 1 1 1 2 3 3 4 6
+  // 1 1 1 1 1 1 1 1 1 1 2 3 3 4 6
+
+  for (int i = 0; i < n; ++i) {
+    cin >> a[i];
   }
 
-  // Get first diff bit
-  // 60 bit numbers (log2(10^18))= 60.
-  int max_bits = 60;
-  ll M = (1ll << max_bits);
-  bool first_bit_diff = true;
-
-  while (M) {
-    bool bit_a = a & M;
-    bool bit_b = b & M;
-
-    if (bit_a != bit_b) {
-      if (first_bit_diff) {
-        first_bit_diff = false;
-      } else if (!bit_a && x + M <= r) {
-        x += M;
-      }
-    }
-    M >>= 1;
+  ll ans = 0;
+  ll min_needed = a.back();
+  for (int i = n - 2; i >= 0; --i) {
+    ll splits = (ll)ceil((double)a[i] / (double)min_needed);
+    ans += (splits - 1);
+    min_needed = min(min_needed, a[i] / splits);
   }
-
-  // equivalent
-  // cout << abs(b - a - 2 * x) << "\n";
-  // cout << abs(a - b + 2 * x) << "\n";
-  cout << abs((a ^ x) - (b ^ x)) << "\n";
+  cout << ans << "\n";
 }
 
 int main() {
