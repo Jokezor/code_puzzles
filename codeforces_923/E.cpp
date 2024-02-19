@@ -310,15 +310,29 @@ void solution() {
   int k;
   cin >> k;
 
-  for (int i = 1; i <= n; ++i) {
-    // Add biggest, then smallest, alternating?
-    if (i % 2) {
-      cout << max(1, n - i) << " ";
+  vector<ll> a(n);
+
+  // Reserves from
+  a[0] = 1;
+  a[1] = n;
+
+  for (int i = 2; i < k; ++i) {
+    if (i % 2 == 0) {
+      a[i] = a[i - 2] + ceil((double)(n - i + 2) / (double)k);
     } else {
-      cout << i << " ";
+      a[i] = a[i - 2] - ceil((double)(n - i + 2) / (double)k);
     }
   }
-  cout << "\n";
+
+  for (int i = k; i < n; ++i) {
+    if (i % 2) {
+      a[i] = a[i - k] - 1;
+    } else {
+      a[i] = a[i - k] + 1;
+    }
+  }
+
+  print(a);
 }
 
 int main() {
