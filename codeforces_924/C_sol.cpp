@@ -290,9 +290,10 @@ auto get_candidates(ll a) {
   for (int i = 1; i * i <= a; ++i) {
     if (a % i == 0) {
       if (i % 2 == 0) {
-        candidates.insert(i);
+        candidates.insert(i); // 2k -2
       }
-      if ((a / i) % 2 == 0) {
+      if ((a / i) % 2 == 0) { // (n-x)/(2k - 2) is even
+                              // Add (n-x)/(2k - 2)
         candidates.insert(a / i);
       }
     }
@@ -316,6 +317,7 @@ void solution() {
   ll ans = 0;
 
   unordered_set<ll> candidates;
+
   candidates = get_candidates(n - x);
 
   for (ll candidate : get_candidates(n + x - 2)) {

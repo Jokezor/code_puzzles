@@ -289,28 +289,37 @@ void solution() {
   //
   // Solve it
   //
-  double eps = 0.000001;
   ll x;
   cin >> n >> x;
 
   ll ans = 0;
+  unordered_set<ll> candidates = divisors(n - x);
 
-  for (ll k = 2; k <= n; ++k) {
-    ll round = 2 * k - 2;
+  unordered_set<ll> k_s;
 
-    double reverse_rounds = (double)(n + x - 2 * k) / (double)round;
-    double rounds = (double)(n - x) / (double)round;
-    // cout << reverse_rounds << "\n";
-    if (floor(rounds) * round == (n - x)) {
+  // The key is to take out all divisors of n-x and n+x-2
+  // Then check for the even ones.
+  // The divisors are (2*k -2) so first we need to divide by 2
+  // And finally add 1 to get k.
+  // We only consider those greater or equal to x since k is the max number.
+  for (auto candidate : divisors(n - x)) {
+    if (candidate % 2 == 0) {
+      ll k = 1 + candidate / 2;
       if (k >= x) {
-        ans++;
-      }
-    } else if (floor(reverse_rounds) * round == (n + x - 2 * k)) {
-      if (k >= x) {
-        ans++;
+        k_s.insert(k);
       }
     }
   }
+
+  for (auto candidate : divisors(n + x - 2)) {
+    if (candidate % 2 == 0) {
+      ll k = 1 + candidate / 2;
+      if (k >= x) {
+        k_s.insert(k);
+      }
+    }
+  }
+  ans += k_s.size();
 
   cout << ans << "\n";
 }
