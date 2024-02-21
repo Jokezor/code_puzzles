@@ -284,31 +284,47 @@ pair<ll, ll> sum(ll l, ll r, ll v = 1, ll L = 1, ll R = n) {
   return res;
 }
 
+auto get_candidates(ll a) {
+  unordered_set<ll> candidates;
+
+  for (int i = 1; i * i <= a; ++i) {
+    if (a % i == 0) {
+      if (i % 2 == 0) {
+        candidates.insert(i);
+      }
+      if ((a / i) % 2 == 0) {
+        candidates.insert(a / i);
+      }
+    }
+  }
+
+  unordered_set<ll> answer;
+  for (ll candidate : candidates) {
+    answer.insert(1 + candidate / 2);
+  }
+  return answer;
+}
+
 void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
   //
-  double eps = 0.000001;
   ll x;
   cin >> n >> x;
 
   ll ans = 0;
 
-  for (ll k = 2; k <= n; ++k) {
-    ll round = 2 * k - 2;
+  unordered_set<ll> candidates;
+  candidates = get_candidates(n - x);
 
-    double reverse_rounds = (double)(n + x - 2 * k) / (double)round;
-    double rounds = (double)(n - x) / (double)round;
-    // cout << reverse_rounds << "\n";
-    if (floor(rounds) * round == (n - x)) {
-      if (k >= x) {
-        ans++;
-      }
-    } else if (floor(reverse_rounds) * round == (n + x - 2 * k)) {
-      if (k >= x) {
-        ans++;
-      }
+  for (ll candidate : get_candidates(n + x - 2)) {
+    candidates.insert(candidate);
+  }
+
+  for (auto candidate : candidates) {
+    if (candidate >= x) {
+      ans++;
     }
   }
 
