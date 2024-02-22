@@ -363,38 +363,46 @@ void solution() {
   // what? Brute force is to use a set, then take the smallest and decrement by
   // 1 until we match the biggest.
 
-  set<ll> alive;
-
-  for (int i = 0; i < n; ++i) {
-    alive.insert(i);
-  }
+  sort(a.begin(), a.end());
 
   ll ans = 0;
   ll x = 0;
 
-  while (alive.size() > 0) {
-    ll low = *alive.begin();
-    ll high = *alive.rbegin();
+  ll low = 0;
+  ll high = n - 1;
 
+  while (low <= high) {
     if (a[high] == x) {
-      alive.erase(high);
+      high--;
       x = 0;
       ans++;
-    } else if (alive.size() != 1) {
-      x += a[low];
-      ans += a[low];
-      alive.erase(low);
+    } else if (low != high) {
+      ll attacks = min(a[low], a[high] - x);
+      ans += attacks;
+      x += attacks;
+      a[low] -= attacks;
+
+      if (a[low] == 0) {
+        low++;
+      }
     } else {
-      // How to handle the case with the lone survivor?
-      // 0 6, x=1
-      // 0 5, x=2
-      // 0 4, x=3
-      // a[high]-1==x
-      // x%(a[high]-1) + 1
-      //
-      ans += x % (a[high] - 1) + 1;
+      // Handle lone survivor.
+      // Take until a[high] - 1.
+      ll attacks = (a[high] - x) / 2;
+
+      // if even, we can reach a[high] and simply remove directly
+      if ((a[high] - x) % 2 == 0) {
+        attacks++;
+      } else {
+        // otherwise we first need to remove with x and then the 1 left over.
+        attacks += 2;
+      }
+      ans += min(a[high], attacks);
+      low++;
+      high--;
     }
   }
+  cout << ans << "\n";
 }
 
 int main() {
