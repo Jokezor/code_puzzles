@@ -123,7 +123,7 @@ struct hash_pair {
 };
 
 const int maxN = 200013;
-int n;
+ll n;
 
 vector<ll> p;
 
@@ -184,49 +184,6 @@ struct hash_triplet {
   }
 };
 
-struct hash_good_triplet {
-  template <class T1, class T2, class T3>
-  size_t operator()(const tuple<T1, T2, T3> &p) const {
-    auto elem1 = get<0>(p);
-    auto elem2 = get<1>(p);
-    auto elem3 = get<2>(p);
-
-    if (elem1 > elem2)
-      swap(elem1, elem2);
-    if (elem2 > elem3)
-      swap(elem2, elem3);
-    if (elem1 > elem2)
-      swap(elem1, elem2);
-
-    size_t hash1 = hash<T1>{}(elem1);
-    size_t hash2 = hash<T2>{}(elem2);
-    size_t hash3 = hash<T3>{}(elem3);
-
-    size_t seed = 0;
-    seed ^= hash1 + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    seed ^= hash2 + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    seed ^= hash3 + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-
-    return seed;
-  }
-};
-
-struct compare_tuple {
-  bool operator()(const tuple<ll, ll, ll> &a,
-                  const tuple<ll, ll, ll> &b) const {
-    // Convert tuples to arrays or vectors for easy sorting
-    array<ll, 3> arr_a = {get<0>(a), get<1>(a), get<2>(a)};
-    array<ll, 3> arr_b = {get<0>(b), get<1>(b), get<2>(b)};
-
-    // Sort arrays to normalize order
-    sort(arr_a.begin(), arr_a.end());
-    sort(arr_b.begin(), arr_b.end());
-
-    // Now compare the sorted arrays
-    return arr_a < arr_b;
-  }
-};
-
 template <class Os, class K> Os &operator<<(Os &os, const std::multiset<K> &v) {
   os << '[' << v.size() << "] {";
   bool o{};
@@ -235,63 +192,35 @@ template <class Os, class K> Os &operator<<(Os &os, const std::multiset<K> &v) {
   return os << " }\n";
 }
 
-template <class Os, class K>
-Os &operator<<(Os &os, const std::tuple<K, K, K> &v) {
-  bool o{};
-  ll first = get<0>(v);
-  ll second = get<1>(v);
-  ll third = get<2>(v);
-
-  return os << first << ", " << second << ", " << third;
-}
-
-template <class Os, class K>
-Os &operator<<(Os &os, const std::set<K, compare_tuple> &v) {
-  os << '[' << v.size() << "] ";
-  bool o{};
-  for (const auto &e : v)
-    os << (o ? ", " : (o = 1, " ")) << "{" << e << "} ";
-  return os << " }\n";
-}
-
-template <class Os, class K> Os &operator<<(Os &os, const std::set<K> &v) {
-  os << '[' << v.size() << "] ";
-  bool o{};
-  for (const auto &e : v)
-    os << (o ? ", " : (o = 1, " ")) << "{" << e << "} ";
-  return os << " }\n";
-}
-
+vector<pair<ll, ll>> t(maxN * 4);
+int a[maxN + 1];
 // build
-// void build(int a[], ll v = 1, ll tl = 1, ll tr = n) {
-//   if (tl == tr) {
-//     // Go through all other elements and add
-//     // 1 to their score if they divide us.
-//     // Also count how many we divide to add our score.
-//     // Either best with a map?
-//     cout << a[tl] << "\n";
-//     for (int i = tl + 1; i <= n; ++i) {
-//       if (a[i] % a[tl] == 0) {
-//         cout << "hm\n";
-//         t[v]++;
-//       }
-//       if (a[tl] % a[i] == 0) {
-//         cout << "what\n";
-//         score[i]++;
-//       }
-//     }
-//     t[v] += score[tl];
-//     cout << t[v] << "\n";
-//     return;
-//   }
-//   ll tm = (tl + tr) >> 1;
-//
-//   build(a, v * 2, tl, tm);
-//   build(a, v * 2 + 1, tm + 1, tr);
-//
-//   // Unclear what to store at each non-leaf vertex
-//   // t[v] = max(t[2 * v], t[2 * v + 1]);
-// }
+void build(int a[], ll v = 1, ll tl = 1, ll tr = n) {
+  if (tl == tr) {
+    t[v].first = tl;
+    t[v].second = tl;
+    return;
+  }
+  ll tm = (tl + tr) >> 1;
+
+  build(a, v * 2, tl, tm);
+  build(a, v * 2 + 1, tm + 1, tr);
+
+  auto x = t[2 * v];
+  auto y = t[2 * v + 1];
+
+  if (a[x.first] <= a[y.first]) {
+    t[v].first = x.first;
+  } else {
+    t[v].first = y.first;
+  }
+
+  if (a[x.second] >= a[y.second]) {
+    t[v].second = x.second;
+  } else {
+    t[v].second = y.second;
+  }
+}
 
 // update
 // void update(ll l, ll r, ll pos, ll i, ll new_val, ll v = 1) {
@@ -321,65 +250,80 @@ template <class Os, class K> Os &operator<<(Os &os, const std::set<K> &v) {
 // }
 //
 // // queries
-// unsigned int sum(ll l, ll r, ll v = 1, ll L = 1, ll R = n) {
-//   if (L > R)
-//     return 0;
-//   if (l == L && r == R) {
-//     return t[v];
-//   }
-//   ll mid = (l + r) >> 1;
-//
-//   unsigned int x, y;
-//
-//   x = sum(l, mid, v * 2, L, min(mid, R));
-//
-//   y = sum(mid + 1, r, v * 2 + 1, max(mid + 1, L), R);
-//
-//   if (N & 1) {
-//     return x | y;
-//   } else {
-//     return x ^ y;
-//   }
-// }
-
-ll get_digsum(ll e) {
-  ll digsum = 0;
-
-  while (e > 10) {
-    digsum += e % 10;
-    e /= 10;
+pair<ll, ll> sum(ll l, ll r, ll v = 1, ll L = 1, ll R = n) {
+  if (R < l || r < L) {
+    return {maxN, 0};
   }
-  digsum += e % 10;
-  return digsum;
+  if (l <= L && R <= r) {
+    return t[v];
+  }
+  ll mid = (L + R) >> 1;
+
+  // cout << "dammn \n";
+
+  auto x = sum(l, r, v * 2, L, mid);
+
+  auto y = sum(l, r, v * 2 + 1, mid + 1, R);
+
+  pair<ll, ll> res{};
+
+  // cout << x.first << " " << x.second << "\n";
+  // cout << y.first << " " << y.second << "\n";
+
+  if (a[x.first] <= a[y.first]) {
+    res.first = x.first;
+  } else {
+    res.first = y.first;
+  }
+
+  if (a[x.second] >= a[y.second]) {
+    res.second = x.second;
+  } else {
+    res.second = y.second;
+  }
+  return res;
 }
 
 void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
-  cin >> n;
+  ll k;
+  ll ans = 0;
 
-  ll ans = 1;
+  cin >> n >> k;
 
-  while (n > 0) {
-    ll d = n % 10;
-    n /= 10;
-    ll mul = 0;
+  // Diagonals give different number of points.
+  // In a square, there is 2 diagonals which give 3 points.
+  //
+  // Every square is at least part of 2 diagonals.
+  // Thus we should colour first unique until we cant no more
+  // or we reached k.
+  // Then we know that we simply add the rest as they all cross 1 diagonal.
+  //
+  // Does it matter which cell we choose then?
+  //
+  // Yes, choosing the middle would have 3 cells filled
+  // but now we have 3 with 2 diagonals instead.
+  // A size 2 has 2: 2 + 0 cells with 2 diagonals.
+  // A size 3 has 4: 3 + 1 cells with unique diagonals
+  // A size 4 has 6: 4 + 2 cells with unique diagonals?
+  // A size 5 has 8: 5 + 3 cells?
+  //
+  // So n + (n-2): 2n -2
+  // Essentially, pick 2n-2 and then add ones.
+  //
+  //
+  // ans += max(2n-2, ceil(k/2))
+  // ans += max(k, )
+  ll used = min(2 * n - 2, k / 2);
 
-    for (int i = 0; i <= d; ++i) {
-      for (int j = 0; j <= d; ++j) {
-        for (int k = 0; k <= d; ++k) {
-          if (i + j + k == d) {
-            mul++;
-          }
-        }
-        // if (d - i - j >= 0) {
-        //   mul++;
-        // }
-      }
-    }
-    ans *= mul;
-  }
+  // cout << used << "\n";
+
+  ans += used;
+  k -= used * 2;
+
+  ans += k;
 
   cout << ans << "\n";
 }
