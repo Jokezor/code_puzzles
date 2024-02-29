@@ -318,41 +318,71 @@ pair<ll, ll> factorize(ll a, ll b, ll c) {
   return make_pair(x, y);
 }
 
+int getTrailingDigits(string s) {
+  int i = s.length() - 1;
+
+  while (s[i] == '0') {
+    i--;
+  }
+
+  return s.length() - i - 1;
+}
+
+int getLeadingDigits(string s) {
+  int i = 0;
+
+  while (s[i] == '0') {
+    i++;
+  }
+
+  return s.length() - i;
+}
+
+bool rankSorter(string s1, string s2) {
+
+  ll rank_1 = getTrailingDigits(s1);
+  ll rank_2 = getTrailingDigits(s2);
+
+  return rank_1 > rank_2;
+}
+
 void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
   //
-  ll x, y;
-  cin >> n >> x >> y;
+  ll m;
+  cin >> n >> m;
 
-  vector<ll> a(n);
+  vector<string> a(n);
 
   for (int i = 0; i < n; ++i) {
     cin >> a[i];
   }
 
-  ll ans = 0;
-  unordered_map<pair<ll, ll>, ll, hash_pair> cnt;
+  sort(a.begin(), a.end(), rankSorter);
 
-  // (a_i + a_j) % x = 0 => (a_i%x + a_j%x)%x = 0
-  // Thus either (a_i%x + a_j%x) = x or 0.
-  // => a_i%x = (x- a_j%x)%x since (a_i%x + a_j%x) = 0 => a_i%x = -a_j%x but
-  // both a_j and a_i > 0.
-  // Similarly for (a_i - a_j)%y =0
-  // Thus (a_i%y - a_j%y) = y or 0.
-  //
-  // If (a_i%y - a_j%y) = y => a_i%y = (y+a_j%y)%y = a_j%y
-  // a_i%y = a_j%y
-  // Go through a in order, take out a_j, then check if (x - a_j%x) % x, a_j%y
-  // is present in the map, if so add the count to answer.
-  for (ll a_j : a) {
-    ll xx = a_j % x, yy = a_j % y;
-    ans += cnt[make_pair((x - xx) % x, (y + yy) % y)];
-    cnt[make_pair(xx, yy)]++;
+  ll ans = 0;
+
+  for (int i = 0; i < n; ++i) {
+    if (i % 2 == 0) {
+      reverse(a[i].begin(), a[i].end());
+    }
+    ans += getLeadingDigits(a[i]);
   }
 
-  cout << ans << "\n";
+  if (ans > m) {
+    cout << "Sasha\n";
+  } else {
+    cout << "Anna\n";
+  }
+  // cout << ans << "\n";
+
+  // If the last number is >= 10^m, Sasha wins
+  // otherwise Anna wins.
+  //
+  // That is, Sasha wants the highest number
+  // Anna wants the lowest number
 }
 
 int main() {
