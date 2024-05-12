@@ -288,24 +288,52 @@ void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
-  string ans;
+
+  // Do it by simply finding a substring.
+  // Then remove the middle letter of each substring.
+  // Thus the total number of operations is the total number of substrings
+  // found.
+
+  int n;
   string s;
 
+  cin >> n;
   cin >> s;
 
-  for (char c : s) {
-    if (c != '+') {
-      ans += c;
+  vector<string> bad_words = {"pie", "map"};
+
+  ll ans = 0;
+
+  // Checks how many there is.
+  for (string bad_word : bad_words) {
+    size_t found = s.find(bad_word);
+
+    while (found != string::npos) {
+      ans++;
+      found = s.find(bad_word, found+3);
     }
   }
 
-  sort(ans.begin(), ans.end());
+  size_t found_map = s.find("map");
 
-  for (int i =0; i < ans.length()-1; ++i) {
-    cout << ans[i] << "+";
+  while (found_map != string::npos) {
+    size_t found_pie = s.find("pie", found_map+2);
+    if (found_pie == string::npos) {
+      break;
+    }
+    // Remove 1, we could double combo instead.
+    if (found_pie - found_map == 2) {
+      ans--;
+    }
+    found_map = s.find("map", found_map+3);
   }
 
-  cout << ans[ans.length()-1] << "\n";
+  // Check how many we can instead remove in a combo.
+  // 1. Find a substring of map.
+  // 2. Check if there is a substring pie starting at the end of the first substring match.
+  // 3. If so, remove 1 from ans.
+
+  cout << ans << "\n";
 
 }
 
@@ -314,6 +342,7 @@ int main() {
   cin.tie(NULL);
 
   int t = 1;
+  cin >> t;
 
   while (t--)
     solution();
