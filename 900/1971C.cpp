@@ -327,42 +327,42 @@ void solution() {
 
   cin >> a >> b >> c >> d;
 
-  map<ll, pair<ll, ll>> clock_to_point = {
-    {12, {0, 3}}, 
-    {11, {-1, 2}}, 
-    {1, {1, 2}}, 
-    {10, {-2, 1}}, 
-    {2, {2, 1}}, 
-    {9, {-3, 0}}, 
-    {3, {3, 0}}, 
-    {8, {-2, -1}}, 
-    {4, {2, -1}}, 
-    {7, {-1, -2}}, 
-    {5, {1, -2}}, 
-    {6, {0, -3}}
-  };
+  if (d < c) {
+    swap(d, c);
+  }
+  if (b < a) {
+    swap(b, a);
+  }
 
-  a = 7;
-  b = 12;
-  c = 11;
-  d = 8;
+  set<ll> cross_a;
 
-  auto p_a = clock_to_point[a];
-  auto p_b = clock_to_point[b];
-  auto p_c = clock_to_point[c];
-  auto p_d = clock_to_point[d];
+  for (int i = a+1; i < b; ++i) {
+    cross_a.insert(i);
+  }
 
-  pt p1 = {p_a.first, p_a.second};
-  pt p2 = {p_b.first, p_b.second};
-  pt p3 = {p_c.first, p_c.second};
-  pt p4 = {p_d.first, p_d.second};
+  set<ll> cross_b;
+  ll i = b;
+  while (i != a) {
+    if (i == 12) {
+      i = 1;
+    }
+    else {
+      ++i;
+    }
+    cross_b.insert(i);
+  }
 
-  if (check_inter(p1, p2, p3, p4)) {
+  // Could also be solved by walked around the clock.
+  // And check if we encounter the same string ends or not.
+  // If we get one of each, then they will cross.
+  // Essentially:
+  // cout << (s == "abab" || s == "baba" ? "YES\n" : "NO\n");
+  if ((cross_a.contains(c) && cross_b.contains(d)) || (cross_a.contains(d) && cross_b.contains(c))) {
     cout << "YES\n";
+    return;
   }
-  else {
-    cout << "NO\n";
-  }
+
+  cout << "NO\n";
 
 }
 
