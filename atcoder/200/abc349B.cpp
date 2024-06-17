@@ -354,18 +354,33 @@ void solution() {
   //
   // Solve it
 
-  ll a, b;
-  cin >> a >> b;
+  string s;
+  cin >> s;
 
-  ll suspect = 1+2+3;
+  vector<int> count(26, 0);
 
-  // if a != b
-  if (a != b) {
-    cout << suspect - (a+b) << "\n";
+  for (char c: s) {
+    ++count[c-'a'];
   }
-  else {
-    cout << -1 << "\n";
+
+  ll num = 0;
+
+  vector<int> mp(101, 0);
+
+  for (int n : count) {
+    if (n) {
+      ++mp[n];
+    }
   }
+
+  for (int p : mp) {
+    if (p != 2 && p != 0) {
+      cout << "No\n";
+      return;
+    }
+  }
+
+  cout << "Yes\n";
 } 
 
 

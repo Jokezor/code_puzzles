@@ -354,26 +354,30 @@ void solution() {
   //
   // Solve it
 
-  ll h;
-  cin >> h;
+  ll n;
+  cin >> n;
 
-  // 1,3,7,15,31,63
-  // 2^(n)-1
-  // 2^n - 1 > h
-  // => n = log(h+1, 2)
-  ll extra = 1;
-  
-  ll m = 0;
+  string s, f;
+  cin >> s >> f;
 
-  ll height = 0;
+  ll diff = 0;
+  ll not_matched = 0;
 
-  while (height <= h) {
-    ++m;
-    height += extra;
-    extra *= 2;
+  ll f_ones = 0;
+
+  for (int i=0; i < n; ++i) {
+    if (s[i] != f[i]) {
+      if (s[i] == '1') {
+        ++not_matched;
+      }
+      ++diff;
+    }
+    if (f[i] == '1') {
+      ++f_ones;
+    }
   }
-
-  cout << m << "\n";
+  ll ans = diff - min(f_ones, not_matched);
+  cout << ans << "\n";
 } 
 
 
@@ -382,7 +386,7 @@ int main() {
   cin.tie(NULL);
 
   int t = 1;
-  // cin >> t;
+  cin >> t;
 
   while (t--)
     solution();

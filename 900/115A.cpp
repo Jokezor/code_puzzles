@@ -354,20 +354,75 @@ void solution() {
   //
   // Solve it
 
-  ll a, b;
-  cin >> a >> b;
+  ll n;
+  cin >> n;
 
-  ll suspect = 1+2+3;
+  // Take in the managers first in a vector, sort to process in order.
+  
+  vector<pair<ll, ll>> manager_input(n);
 
-  // if a != b
-  if (a != b) {
-    cout << suspect - (a+b) << "\n";
+  for (int i=0; i < n; ++i) {
+    ll p;
+    cin >> p;
+    manager_input[i] = {p-1, i};
   }
-  else {
-    cout << -1 << "\n";
-  }
-} 
 
+  sort(manager_input.begin(), manager_input.end());
+
+  // Track immediate manager and root manager.
+  vector<pair<ll, ll>> managers(n);
+
+  // One group with all roots
+  ll ans = 1;
+
+  unordered_set<ll> unmatched_employees;
+
+  for (int i=0; i < n; ++i) {
+    pair<ll, ll> p = manager_input[i];
+
+    ll sup = p.first;
+    ll index = p.second;
+
+    if (sup < 0) {
+      managers[index] = {-1, -1};
+    }
+    else {
+      ll supervisor = managers[sup].second;
+      if (supervisor == -1) {
+        supervisor = sup;
+      }
+      managers[index] = {sup, supervisor};
+      unmatched_employees.insert(index);
+    }
+  }
+
+  // Simply loop through all employees, check if supervisor?
+  // If not then add to set and go to next.
+
+  // Count max unique managers with same root manager.
+  ll max_managers = 0;
+
+  for (int i=0; i < n; ++i) {
+    if (managers[i].first == -1) {
+      continue;
+    }
+    for (ll employee : unmatched_employees) {
+      pair<ll, ll> p = managers[employee];
+
+      ll sup = p.first;
+      ll root = p.second;
+
+      while (managers[root].second > 0) {
+        root = managers[root].second;
+      }
+    }
+    ans++;
+  }
+
+  ans = min(n, ans);
+  cout << ans << "\n";
+
+}
 
 int main() {
   ios_base::sync_with_stdio(false);

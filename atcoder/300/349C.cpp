@@ -354,41 +354,29 @@ void solution() {
   //
   // Solve it
 
-  ll n;
-  cin >> n;
+  string s, t;
+  cin >> s >> t;
 
-  // cout << "##\n##";
-  // cout << "##..##\n##..##\n..##..\n..##..\n##..##\n##..##\n";
-  //
-  // Could also have noted that sum of coordinates should print
-  // # if even and . if odd.
+  ll count = 0;
+  int curr = 0;
 
-  char c = '#';
-  for (int i=0; i < n; ++i) {
-    char curr = c;
-    for (int k =0; k < 2; ++k) {
-      c = curr;
-      for (int j=0; j < 2*n; ++j) {
-        if (j >= 2 && j%2 == 0) {
-          if (c == '#') {
-            c = '.';
-          }
-          else {
-            c = '#';
-          }
-        }
-        cout << c;
-      }
-      cout << "\n";
-      c = curr;
+  for (int i =0; i < s.length(); ++i) {
+    if (s[i] == tolower(t[curr])) {
+      ++curr;
     }
-    if (curr == '#') {
-      c = '.';
-    }
-    else {
-      c = '#';
+    if (curr == 3) {
+      break;
     }
   }
+
+  if ((curr == 2 && t[2] == 'X') || curr == 3) {
+    cout << "Yes\n";
+    return;
+  }
+  cout << "No\n";
+
+  
+
 } 
 
 
@@ -397,7 +385,7 @@ int main() {
   cin.tie(NULL);
 
   int t = 1;
-  cin >> t;
+  // cin >> t;
 
   while (t--)
     solution();

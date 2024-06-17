@@ -354,28 +354,29 @@ void solution() {
   //
   // Solve it
 
-  ll h;
-  cin >> h;
+  ll x, n;
+  cin >> x >> n;
 
-  // 1,3,7,15,31,63
-  // 2^(n)-1
-  // 2^n - 1 > h
-  // => n = log(h+1, 2)
-  ll extra = 1;
-  
-  ll m = 0;
+  // Totally wrong distance.
+  ll distance = ceil((double)n/2);
+  cout << distance << "\n";
 
-  ll height = 0;
-
-  while (height <= h) {
-    ++m;
-    height += extra;
-    extra *= 2;
+  if (x & 1) {
+    if (n % 2 == 0) {
+      distance = -distance;
+    }
+  }
+  else {
+    if (n & 1) {
+      distance = - distance;
+    }
   }
 
-  cout << m << "\n";
-} 
+  ll ans = x + distance;
 
+  cout << ans << "\n";
+
+}
 
 int main() {
   ios_base::sync_with_stdio(false);
