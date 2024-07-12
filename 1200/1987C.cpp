@@ -354,103 +354,22 @@ void solution() {
   //
   // Solve it
 
-  // Basically just the inflection points decrease.
-  // Tricky part is that multiple flowers decrease at once.
-  //
-  //
-  // 3
-  // 1 1 2
-  //
-  // 1 1 1
-  // 1 1 0
-  // 1 0 0
-  // 0 0 0
-
-  // Add h[n-1].
-  // Subtract it from all inflection points.
-  //
-  // 5
-  // 7 4 4 3 2
-  // 6 4 3 2 1
-  // 5 3 2 1 0
-  // 4 2 1 0 0
-  // 3 1 0 0 0
-  // 2 0 0 0 0
-  // 1 0 0 0 0
-  // 0 0 0 0 0
-  //
-  // number of moves to sort non increasing + max?
-  //
-  // 2
-  // 1 3
-  //
-  // 1 2
-  // 1 1
-  // 1 0
-  // 0 0
-  //
-  // 5
-  // 1 4 1 1 3
-  //
-  // 1 3 1 1 2
-  // 1 2 1 1 1
-  // 1 1 1 1 0
-  //
-  // 2
-  // 3 1
-  // 2 0
-  //
-  // 3 1 2
-  //
-  // 2 1 1
-  // 1 1 0
-  // 1 0 0
-  // 0 0 0
-  //
-  // h[n-1] + (n-1)
-  //
-  // x x x x
-  //
-  // x x x x-1
-  // x x x-1 x-2
-  // x x-1 x-2 x-3
-  // x-1 x-2 x-3 x-4
-  //
-  // 3 + x
-
-
   ll n;
   cin >> n;
 
   vector<ll> h(n);
 
-  ll mx = 0;
-  ll mx_ind = -1;
-
   for (int i=0; i < n; ++i) {
     cin >> h[i];
-
-    if (h[i] >= mx) {
-      mx = h[i];
-      mx_ind = i;
-    }
   }
 
-  // inflection points + index of max + max?
+  ll max_diff = h[n-1];
 
-  ll inflection_points = h[n-1];
-
-  for (int i=0; i < n-1; ++i) {
-    if (h[i] > (h[n-2])) {
-      ++inflection_points;
-    }
+  for (int i=n-2; i >= 0; --i) {
+    max_diff = max(max_diff + 1, h[i]);
   }
 
-  ll ans = max(mx, inflection_points);
-
-// 581485311+ (581485311-147717016 > 0) + (581485311 > 147717016) + (581485311 > 147717016) + (581485311 > 147717016)
-
-  cout << ans << "\n";
+  cout << max_diff << "\n";
 } 
 
 
