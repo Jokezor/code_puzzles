@@ -354,6 +354,18 @@ void solution() {
   //
   // Solve it
 
+  // if y >= -1 then yes.
+
+  ll x, y;
+  cin >> x >> y;
+
+  if (y >= -1) {
+    cout << "YES\n";
+  }
+  else {
+    cout << "NO\n";
+  }
+
 } 
 
 
