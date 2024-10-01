@@ -1,0 +1,45 @@
+[package]
+name = "competition-solutions"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "abc367"
+path = "src/abc367.rs"
+
+[[bin]]
+name = "abc370"
+path = "src/abc370.rs"
+
+[[bin]]
+name = "abc368"
+path = "src/abc368.rs"
+
+[[bin]]
+name = "2010B"
+path = "src/2010B.rs"
+
+[[bin]]
+name = "2007B"
+path = "src/2007B.rs"
+
+[[bin]]
+name = "abc372A"
+path = "src/abc372A.rs"
+
+
+[[bin]]
+name = "abc371A"
+path = "src/abc371A.rs"
+
+[[bin]]
+name = "abc373A"
+path = "src/abc373A.rs"
+
+
+[[bin]]
+name = "abc373B"
+path = "src/abc373B.rs"
+
+
+
