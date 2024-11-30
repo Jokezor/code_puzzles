@@ -41,5 +41,9 @@ path = "src/abc373A.rs"
 name = "abc373B"
 path = "src/abc373B.rs"
 
+[[bin]]
+name = "abc379A"
+path = "src/abc379A.rs"
+
 
 
