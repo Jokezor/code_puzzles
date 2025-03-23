@@ -88,6 +88,8 @@ public:
   bool is_connected(int a, int b) { return parent[a] == parent[b]; }
 };
 
+
+
 int gcd(int x, int y) {
   if (y) {
     return gcd(y, x % y);
@@ -321,31 +323,30 @@ pair<ll, ll> sum(ll l, ll r, ll v = 1, ll L = 1, ll R = n) {
 }
 
 struct pt {
-  ll x, y;
-  pt() {}
-  pt(ll _x, ll _y) : x(_x), y(_y) {}
-  pt operator-(const pt &p) const { return pt(x - p.x, y - p.y); }
-  ll cross(const pt &p) const { return x * p.y - y * p.x; }
-  ll cross(const pt &a, const pt &b) const {
-    return (a - *this).cross(b - *this);
-  }
+    ll x, y;
+    pt() {}
+    pt(ll _x, ll _y) : x(_x), y(_y) {}
+    pt operator-(const pt& p) const { return pt(x - p.x, y - p.y); }
+    ll cross(const pt& p) const { return x * p.y - y * p.x; }
+    ll cross(const pt& a, const pt& b) const { return (a - *this).cross(b - *this); }
 };
 
-int sgn(const ll &x) { return x >= 0 ? x ? 1 : 0 : -1; }
+
+int sgn(const ll& x) { return x >= 0 ? x ? 1 : 0 : -1; }
 
 bool inter1(ll a, ll b, ll c, ll d) {
-  if (a > b)
-    swap(a, b);
-  if (c > d)
-    swap(c, d);
-  return max(a, c) <= min(b, d);
+    if (a > b)
+        swap(a, b);
+    if (c > d)
+        swap(c, d);
+    return max(a, c) <= min(b, d);
 }
 
-bool check_inter(const pt &a, const pt &b, const pt &c, const pt &d) {
-  if (c.cross(a, d) == 0 && c.cross(b, d) == 0)
-    return inter1(a.x, b.x, c.x, d.x) && inter1(a.y, b.y, c.y, d.y);
-  return sgn(a.cross(b, c)) != sgn(a.cross(b, d)) &&
-         sgn(c.cross(d, a)) != sgn(c.cross(d, b));
+bool check_inter(const pt& a, const pt& b, const pt& c, const pt& d) {
+    if (c.cross(a, d) == 0 && c.cross(b, d) == 0)
+        return inter1(a.x, b.x, c.x, d.x) && inter1(a.y, b.y, c.y, d.y);
+    return sgn(a.cross(b, c)) != sgn(a.cross(b, d)) &&
+           sgn(c.cross(d, a)) != sgn(c.cross(d, b));
 }
 
 void solution() {
@@ -353,40 +354,25 @@ void solution() {
   //
   // Solve it
 
-  // Count the number of non-empty prefixes that are good.
-  // 1, ..., i
-  // if a[0] == 0, ++ans.
+  string a, b;
 
-  ll n;
+  cin >> a >> b;
 
-  cin >> n;
-
-  vector<ll> a(n);
-  for (int i = 0; i < n; ++i) {
-    cin >> a[i];
-  }
-
-  ll ans = 0;
-  ll sum_a = 0;
-  ll max_a = 0;
-
-  for (int i = 0; i < n; ++i) {
-    sum_a += a[i];
-    max_a = max(max_a, a[i]);
-
-    if ((sum_a - max_a) == max_a) {
-      ++ans;
-    }
+  ll ans = -1ll;
+  if (a != b) {
+    ans = max(a.length(), b.length());
   }
   cout << ans << "\n";
-}
+
+} 
+
 
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
 
   int t = 1;
-  cin >> t;
+  // cin >> t;
 
   while (t--)
     solution();

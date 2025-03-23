@@ -349,15 +349,15 @@ bool check_inter(const pt& a, const pt& b, const pt& c, const pt& d) {
            sgn(c.cross(d, a)) != sgn(c.cross(d, b));
 }
 
-ll floor(ll x, ll m) {
-    ll r = (x % m + m) % m;
-    return (x - r) / m;
-}
-
 void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
+
+  ll n, m , k;
+  cin >> n >> m >> k;
+
+
 
 } 
 
