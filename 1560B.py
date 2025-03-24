@@ -2,16 +2,19 @@
 def solution():
     a,b,c = map(int, input().split(" "))
 
-    # Need same parity.
-    #if ((a & 1) != (b&1)):
-    #    return -1
-
     # guesstimate n by and b instead, then do the test on the d candidate.
     n = (max(a,b) - min(a,b))*2
 
-    d = max(1, (c + n//2)%(n+1));
+    if n < max(a, b, c):
+        return -1
 
-    if max(c, d) != (min(c, d) + n/2):
+    d = (c + n//2);
+
+    if d > n:
+        d %= n
+        d = max(1, d)
+
+    if max(c, d) != (min(c, d) + n/2) or d in {a, b, c}:
         return -1
 
     return d
