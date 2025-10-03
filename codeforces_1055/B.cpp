@@ -353,29 +353,6 @@ void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
-  int n, m;
-  cin >> n >> m;
-
-  int px = 0, py = 0;
-  int points = 0;
-
-  for (int i=0; i < n; ++i) {
-      int x, y;
-      cin >> x >> y;
-
-      points += x - px;
-      if (((x - px + 2) % 2) != ((y - py + 2) % 2)) {
-          --points;
-      }
-      px = x;
-      py = y;
-  }
-  if (px != m) {
-      points += m - px;
-  }
-
-  cout << points << "\n";
- 
   
 }
 

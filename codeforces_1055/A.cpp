@@ -353,29 +353,41 @@ void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
-  int n, m;
-  cin >> n >> m;
-
-  int px = 0, py = 0;
-  int points = 0;
-
-  for (int i=0; i < n; ++i) {
-      int x, y;
-      cin >> x >> y;
-
-      points += x - px;
-      if (((x - px + 2) % 2) != ((y - py + 2) % 2)) {
-          --points;
-      }
-      px = x;
-      py = y;
-  }
-  if (px != m) {
-      points += m - px;
-  }
-
-  cout << points << "\n";
  
+    int n;
+
+    cin >> n;
+
+    set<char, std::greater<char>> a;
+
+    for (int i=0; i < n; ++i) {
+        int el;
+        cin >> el;
+        a.insert(el);
+    }
+
+
+    int res = a.size() * (1 + (a.size() > 1)) - (a.size() > 1);
+
+    cout << res << "\n";
+    return;
+     
+    int prev = -1;
+    int consecutive = 0;
+
+    for (char b : a) {
+        if (prev != -1) {
+            int diff = prev - b;
+            res += diff;
+            if (diff == 1) {
+                ++consecutive;
+            }
+        }
+        prev = b;
+    }
+
+    res += max(1, consecutive);
+    cout << res << "\n";
   
 }
 
