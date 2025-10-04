@@ -353,6 +353,33 @@ void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
+
+    // So essentially, Krug should move away from Doran.
+    // Optimal if moving to closest corners.
+    //
+    // The key is to think about all the possible scenarios.
+    //
+    // 1. rK < rD, then it takes rD steps to reach K.
+    // 2. rK > rD, then it takes n - rD steps.
+    // 3. cK < cD, then it takes cD steps.
+    // 4. cK > cD, then it takes n - cD steps.
+
+    int n, rk, ck, rd, cd;
+
+    cin >> n >> rk >> ck >> rd >> cd;
+
+    int ans = 0;
+
+    if (rk < rd) {
+        ans = max(ans, rd);
+    }
+    if (rk > rd) {
+        ans = max(ans, n - rd);
+    }
+    if (ck < cd) ans = max(ans, cd);
+    if (ck > cd) ans = max(ans, n - cd);
+
+    cout << ans << "\n";
   
 }
 
