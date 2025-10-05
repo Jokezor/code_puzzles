@@ -349,52 +349,48 @@ bool check_inter(const pt& a, const pt& b, const pt& c, const pt& d) {
            sgn(c.cross(d, a)) != sgn(c.cross(d, b));
 }
 
+ll dist_median(vector<int> positions) {
+
+    int n = positions.size();
+    int median = n/2;
+    ll dist = 0;
+
+    // Now we want to calculate for each a how far it is from the median.
+    for (int i=0; i < n; ++i) {
+        dist += abs(positions[i] - positions[median]) - abs(median -i); // Remember to discount for already placed entries.
+    }
+    return dist;
+}
+
 void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
   //
 
-  // So basically, make all integers < k present in the array a.
-  // The upper bound of this is to make all integers above k.
-  // But 0 <=k <= n.
-  // And we can only set to max n?!
-  // I guess that scenario never happens then?
-  // But theoretically it could..
-  //
-  // We could make a bool[n] array where true if present.
-  // Then iterate up to k and count how many are <= k.
-  // Actually, they could be non unique, simply sort the array.
-  //
-  // If we need speed up, look at range queries with ordered set?
+    int n;
+    cin >> n;
 
-  int n, k;
-  cin >> n >> k;
+    vector<int> a;
+    vector<int> b;
 
-  vector<int> a(n);
-  vector<bool> present(n+1, 0);
+    for (int i=0; i < n; ++i) {
+        char c;
+        cin >> c;
+        if (c == 'a') {
+            a.push_back(i);
+        }
+        else {
+            b.push_back(i);
+        }
+    }
 
-  for (int i=0; i < n; ++i) {
-      cin >> a[i];
-  }
+    // Now we have two arrays, one with position of as, one with pos of bs.
 
-  int res = 0;
-  int num_k = 0;
-  int needs_change = 0;
+    ll ans = min(dist_median(a), dist_median(b));
 
-  for (int el : a) {
-      present[el] = 1;
-      if (el == k) num_k++;
-  }
-
-  for (int i=0; i < k; ++i) {
-      if (!present[i]) needs_change++;
-  }
-
-
-  res = max(num_k, needs_change);
-
-  cout << res << "\n";
+    cout << ans << "\n";
+  
   
 }
 
@@ -405,11 +401,8 @@ int main() {
 
   int t = 1;
   cin >> t;
-  int i = 0;
 
-  while (t--) {
-    solution();
-    ++i;
-  }
+  while (t--) solution();
+
   return 0;
 }
