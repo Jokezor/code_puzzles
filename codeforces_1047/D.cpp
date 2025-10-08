@@ -358,47 +358,40 @@ void solution() {
   cin >> n;
 
   vector<int> b(n);
-  set<int> uniques;
 
   for (int i=0; i < n; ++i) {
       cin >> b[i];
-      uniques.insert(b[i]);
   }
 
-  ll sum = 0;
-  vector<int> uniques_list;
-
-  for (auto el : uniques) {
-      sum += el;
-      uniques_list.push_back(el);
-  }
-  // Needs to match n.
-  if (sum > n) {
-      cout << -1 << "\n";
-      return;
+  vector<vector<int>> freq(n+1);
+  for (int i=0; i < n; ++i) {
+      freq[b[i]].push_back(i);
   }
 
-  int curr = 0;
-  int i = 0;
+  vector<int> d(n);
 
-  while (curr < uniques_list.size()) {
-      int iterations = uniques_list[curr];
-      for (int j = 0; j < iterations; ++j) {
-          cout << i+1 << " ";
+  int cnt = 1;
+
+  for (int i=1; i <= n; ++i) {
+      if ((freq[i].size()) % i) {
+          cout << -1 << "\n";
+          return;
       }
-      i += iterations;
-      curr += 1;
+      int c = 0;
+      while (c < freq[i].size()) {
+          for (int v = 0; v < i; ++v) {
+              d[freq[i][c]] = cnt;
+              ++c;
+          }
+          ++cnt;
+      }
   }
 
-  if (i < n) {
-      int repeated_el = i;
-
-      for (int j=i; j < n-1; ++j) {
-          cout << i << " ";
-      }
-      cout << i;
+  for (auto c : d) {
+      cout << c << " ";
   }
   cout << "\n";
+
 }
 
 
