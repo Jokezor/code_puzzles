@@ -354,24 +354,7 @@ void solution() {
   //
   // Solve it
  
-  ll n;
-  cin >> n;
-
-  vector<ll> a(n);
-  vector<ll> b(n);
-
-  for (int i=0; i < n; ++i) cin >> a[i];
-  for (int i=0; i < n; ++i) cin >> b[i];
-
-  ll ans = 1;
-  for (int i=0; i < n; ++i) {
-      ll diff = a[i] - b[i];
-      if (diff > 0) {
-          ans += diff;
-      }
-  }
   
-  cout << ans << "\n";
 }
 
 

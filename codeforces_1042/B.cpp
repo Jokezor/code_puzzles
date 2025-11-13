@@ -357,21 +357,19 @@ void solution() {
   ll n;
   cin >> n;
 
-  vector<ll> a(n);
-  vector<ll> b(n);
-
-  for (int i=0; i < n; ++i) cin >> a[i];
-  for (int i=0; i < n; ++i) cin >> b[i];
-
-  ll ans = 1;
   for (int i=0; i < n; ++i) {
-      ll diff = a[i] - b[i];
-      if (diff > 0) {
-          ans += diff;
+      if (i == n-1 && !(n&1)) {
+          cout << "2";
+      }
+      else if (i & 1) {
+          cout << "3 ";
+      }
+      else {
+          cout << "-1 ";
       }
   }
+  cout << "\n";
   
-  cout << ans << "\n";
 }
 
 
