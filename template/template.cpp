@@ -52,6 +52,29 @@ private:
   const ClockType::time_point start_{};
 };
 
+struct SafeHash {
+    static uint64_t splitmix64(uint64_t x) {
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        x = x ^ (x >> 31);
+        return x;
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM =
+            chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
+
+// usage:
+//unordered_map<long long, long long, SafeHash> mp;
+//mp.reserve(2 * n);
+//mp.max_load_factor(0.7);
+
+
+
 class UnionFind {
 public:
   int size;
@@ -354,64 +377,6 @@ void solution() {
   //
   // Solve it
  
-  // Create unordered_map from t[i] to count of t[i]
-  ll n, k;
-  cin >> n >> k;
-
-  // Ah, we could instead have simply converted t into an array with the
-  // mapping taking the minimum and then check equality.
-
-  vector<ll> s(n);
-  map<ll, ll> t;
-
-  for (int i=0; i < n; ++i) {
-      cin >> s[i];
-  }
-
-  for (int i=0; i < n; ++i) {
-      // Check if exists first.
-      ll t_i;
-      cin >> t_i;
-      if (t.contains(t_i%k)) {
-          t[t_i%k]++;
-      }
-      else {
-          t[t_i%k] = 1;
-      }
-  }
-
-  for (int i=0; i < n; ++i) {
-      ll cand = s[i];
-      ll forward_walk = cand % k;
-      ll backward_walk = abs(forward_walk - k);
-
-
-      bool can_forward = false;
-      bool can_backward = false;
-      if (t.contains(forward_walk)) {
-          if (t[forward_walk] > 0) {
-              can_forward = true;
-              t[forward_walk]--;
-          }
-      }
-      // Only walk backward if we have already tried forward.
-      // Otherwise we would map two values to one integer.
-      if (!can_forward) {
-          if (t.contains(backward_walk)) {
-              if (t[backward_walk] > 0) {
-                  can_backward = true;
-                  t[backward_walk]--;
-              }
-          }
-      }
-      if (!can_forward && !can_backward) {
-          cout << "NO\n";
-          return;
-      }
-  }
-
-  cout << "YES\n";
-  
 }
 
 int main() {
