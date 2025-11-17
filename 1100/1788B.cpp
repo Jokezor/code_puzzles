@@ -395,11 +395,37 @@ void solution() {
 
   //printf("left=%d, right=%d\n", left, right);
   //printf("digit_sum=%d", digit_sum(10));
+  ll diff = abs(digit_sum(left) - digit_sum(right));
 
-  while (abs(digit_sum(left) - digit_sum(right)) > 1) {
-      --left;
-      ++right;
+  if (digit_sum(left) < digit_sum(right)) {
+      swap(left, right);
   }
+
+  // Check if odd diff.!!
+  ll steps_to_take = diff/2;
+
+  vector<ll> num;
+
+  while (steps_to_take > 9) {
+      num.push_back(9);
+      steps_to_take -= 9;
+  }
+  num.push_back(steps_to_take);
+
+  ll real_num = 0;
+  ll power_of_ten = 1;
+
+  for (int i=0; i < num.size(); ++i) {
+      real_num += num[i]*power_of_ten;
+      power_of_ten *= 10;
+  }
+
+  left -= real_num;
+  right += real_num;
+
+  // Check all the cases that sum up to n.
+
+  assert(left + right == n && abs(digit_sum(left) - digit_sum(right)) <= 1);
 
   cout << left << " " << right << "\n";
  
