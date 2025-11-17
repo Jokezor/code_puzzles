@@ -372,14 +372,24 @@ bool check_inter(const pt& a, const pt& b, const pt& c, const pt& d) {
            sgn(c.cross(d, a)) != sgn(c.cross(d, b));
 }
 
-ll digit_sum(ll val) {
-    ll ans = 0;
-    while (val >= 10) {
-        ans += val%10;
-        val /= 10;
+/*
+ * We should loop through all strings k times.
+ * Sampling all combinations
+ *
+ * abc
+ * xxx
+ * abc 
+ *
+ * -> {abcabc, abcabc, abcabc, abcabc, abcxxx, abcxxx, xxxabc, xxxabc, xxxxxx}
+ */
+void get_string(int n, int k, int k_ind, vector<string> s, vector<string> *s_candidates, string s_cand) {
+    if (k_ind == k) {
+        s_candidates->push_back(s_cand);
+        return;
     }
-    ans += val;
-    return ans;
+    for (int i=0; i < n; ++i) {
+        get_string(n, k, k_ind+1, s, s_candidates, s_cand + s[i]);
+    }
 }
 
 void solution() {
@@ -387,44 +397,37 @@ void solution() {
   //
   // Solve it
 
-  ll n;
-  cin >> n;
+  ll n, m;
 
-  ll left = n/2;
-  ll right = n/2 + n%2;
+  cin >> n >> m;
 
-  ll diff = abs(digit_sum(left) - digit_sum(right));
+  ll ans = n*n;
 
-  if (digit_sum(left) < digit_sum(right)) {
-      swap(left, right);
+  set<pair<ll, ll>> attacked_places;
+
+  vector<pair<ll, ll>> moves = {{2, 1}, {1, 2}, {-1, 2}, {-2, 1}, {-2, -1}, {-1, -2}, {1, -2}, {2, -1}};
+
+  for (int i=0; i < m; ++i) {
+      // Calculate in-bounds places to attack.
+      ll x, y;
+      cin >> x >> y;
+
+      for (pair<ll, ll> move : moves) {
+          pair<ll, ll> attack_move = {x+move.first, y+move.second};
+          // Illegal move.
+          if (attack_move.first < 1 || attack_move.first > n || attack_move.second < 1 || attack_move.second > n) {
+              continue;
+          }
+          attacked_places.insert(attack_move);
+      }
+      // Cant place on another piece.
+      attacked_places.insert({x, y});
   }
 
-  ll steps_to_take = diff/2;
+  ans -= attacked_places.size();
 
-  vector<ll> num;
+  cout << ans << "\n";
 
-  while (steps_to_take > 9) {
-      num.push_back(9);
-      steps_to_take -= 9;
-  }
-  num.push_back(steps_to_take);
-
-  ll real_num = 0;
-  ll power_of_ten = 1;
-
-  for (int i=0; i < num.size(); ++i) {
-      real_num += num[i]*power_of_ten;
-      power_of_ten *= 10;
-  }
-
-  left -= real_num;
-  right += real_num;
-
-  // Check all the cases that sum up to n.
-
-  assert(left + right == n && abs(digit_sum(left) - digit_sum(right)) <= 1);
-
-  cout << left << " " << right << "\n";
  
 }
 
@@ -433,10 +436,9 @@ int main() {
   cin.tie(NULL);
 
   int t = 1;
-  cin >> t;
+  //cin >> t;
 
   while (t--)
     solution();
   return 0;
 }
-
