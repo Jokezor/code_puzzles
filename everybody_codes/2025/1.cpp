@@ -372,21 +372,130 @@ bool check_inter(const pt& a, const pt& b, const pt& c, const pt& d) {
            sgn(c.cross(d, a)) != sgn(c.cross(d, b));
 }
 
-void solution() {
+vector<string> get_names(string s_names) {
+  vector<string> names;
+
+  // Go through all names
+  string s_name = "";
+  for (int i=0; i < s_names.length(); ++i) {
+      if (s_names[i] != ',') {
+          s_name += s_names[i];
+      }
+      else {
+          names.push_back(s_name);
+          s_name = "";
+      }
+  }
+  names.push_back(s_name);
+  return names;
+
+}
+
+void part_1(string name_string, string instructions) {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
+
+  vector<string> names = get_names(name_string);
+
+
+  int n = names.size();
+  int index = 0;
+
+  for (int i=0; i < instructions.length(); ++i) {
+      if (instructions[i] == 'L') {
+          int steps = instructions[i+1] - '0';
+          cout << steps << "\n";
+          index = max(0, index - (instructions[i+1] - '0'));
+      }
+      else if (instructions[i] == 'R') {
+          index = min(n-1, index + (instructions[i+1]-'0'));
+      }
+  }
+
+  cout << names[index] << "\n";
  
 }
+
+void part_2(string name_string, string instructions) {
+  // ScopedTimer timer{"solution"};
+  //
+  // Solve it
+
+  vector<string> names = get_names(name_string);
+
+  int n = names.size();
+
+  // Now we should walk in circle.
+  // Now its also double digits to parse.
+  vector<int> left_walks;
+  vector<int> right_walks;
+
+  vector<string> instructions_list = get_names(instructions);
+
+  int index = 0;
+  for (string instruction : instructions_list) {
+      int steps = stoi(instruction.substr(1, instruction.size()-1));
+      if (instruction[0] == 'L') {
+         index -= steps;
+         if (index < 0) index += n;
+      }
+      else if (instruction[0] == 'R') {
+        index += steps;
+        index %= n;
+      }
+  }
+  cout << names[index] << "\n";
+ 
+}
+
+
+void part_3(string name_string, string instructions) {
+  // ScopedTimer timer{"solution"};
+  //
+  // Solve it
+
+  vector<string> names = get_names(name_string);
+
+  int n = names.size();
+
+  // Now we should walk in circle.
+  // Now its also double digits to parse.
+  vector<int> left_walks;
+  vector<int> right_walks;
+
+  vector<string> instructions_list = get_names(instructions);
+
+  int index = 0;
+  for (string instruction : instructions_list) {
+      // Now we should swap relative to 0
+      int steps = stoi(instruction.substr(1, instruction.size()-1));
+      steps %= n;
+
+      if (instruction[0] == 'L') {
+         steps = n - steps;
+      }
+      swap(names[0], names[steps]);
+  }
+  cout << names[0] << "\n";
+ 
+}
+
 
 int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
 
   int t = 1;
-  cin >> t;
+  //cin >> t;
+  string s_names;
+  cin >> s_names;
 
-  while (t--)
-    solution();
+  string instructions;
+  cin >> instructions;
+
+  while (t--) {
+    part_3(s_names, instructions);
+  }
   return 0;
 }
