@@ -20,6 +20,7 @@ typedef __gnu_pbds::tree<int, __gnu_pbds::null_type, less<int>,
     ordered_set;
 
 ll MAX_VAL = (ll)(1e9 + 7);
+ll MIN_VAL = (ll)(-1e8 + 7);
 
 bool USE_TIMER = true;
 
@@ -408,8 +409,45 @@ void solution() {
       cin >> grid[i];
   }
 
-  print(grid);
-  vector<vector<int>> num_bombs(h);
+  vector<vector<int>> num_bombs(h, vector<int>(w, 0));
+
+  // Now go through all the grid.
+  // Increment all places that are next to bombs.
+  // If bomb, then set to MIN_VAL
+  vector<pair<int, int>> valid_directions = {{1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}};
+
+  for (int i=0; i < h; ++i) {
+      string row = grid[i];
+      for (int j =0; j < w; ++j) {
+          // Now get all 8 adjacent
+          if (row[j] == '#') {
+              // Bomb is super negative
+              num_bombs[i][j] = MIN_VAL;
+
+              // Mark all neighbours in num_bombs
+              for (auto direction : valid_directions) {
+                  int x = j + direction.first;
+                  int y = i + direction.second;
+                  if (x < 0 || x >= w || y < 0 || y >= h) {
+                      continue;
+                  }
+                  num_bombs[y][x]++;
+              }
+          }
+      }
+  }
+
+  for (int i=0; i < h; ++i) {
+      for (int j=0; j < w; ++j) {
+          if (num_bombs[i][j] < 0) {
+              cout << "#";
+          }
+          else {
+              cout << num_bombs[i][j];
+          }
+      }
+      cout << "\n";
+  }
 
 
 
