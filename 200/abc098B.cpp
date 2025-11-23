@@ -416,21 +416,28 @@ void solution() {
 
   // We can simply take the letters, map to 26 different bits.
   // Then count the number of bits set.
+  vector<ll> pref(n+1), suff(n+1);
 
-  // Check each length split
-  // i is the length of X
-  ll ans = 0;
-  for (int i=1; i < n; ++i) {
-      string left = s.substr(0, i);
-      string right = s.substr(i, n-i);
-
-      ll left_set = get_bitset(left);
-      ll right_set = get_bitset(right);
-
-      ans = max(ans, (ll)__builtin_popcountll(left_set & right_set));
+  // We now have in each position, the bitset forward and backward.
+  for (int i=0; i < n; ++i) {
+      pref[i+1] = pref[i] | (1 << (s[i] - 'a'));
   }
-  cout << ans << "\n";
 
+  for (int i=n-1; i >= 0; --i) {
+      suff[i] = suff[i+1] | (1 << (s[i] - 'a'));
+  }
+
+  ll ans = 0;
+  // Now compute the best bitset split
+  for (int i=1; i < n; ++i) {
+      ll left = pref[i];
+      ll right = suff[i];
+
+      ll common = left & right;
+      ans = max(ans, (ll)__builtin_popcountll(common));
+  }
+
+  cout << ans << "\n";
 
 }
 
