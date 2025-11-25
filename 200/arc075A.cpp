@@ -400,7 +400,7 @@ void solution() {
   int n;
   cin >> n;
 
-  vector<int> s(n)
+  vector<int> s(n);
   int ans = 0;
 
   for (int i=0; i < n; ++i) {
@@ -414,14 +414,19 @@ void solution() {
   }
 
   // Need to subtract smallest nonmultiple of 10.
-  int min_val = max(s.begin(), s.end());
+  int min_val = MAX(s);
   for (int i=0; i < n; ++i) {
       if (s[i] % 10 != 0) {
           min_val = min(min_val, s[i]);
       }
   }
 
-  cout << ans - min_val << "\n";
+  if ((ans - min_val) % 10) {
+      cout << ans - min_val << "\n";
+  }
+  else {
+      cout << "0\n";
+  }
 
 }
 
