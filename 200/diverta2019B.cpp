@@ -392,10 +392,52 @@ void get_string(int n, int k, int k_ind, vector<string> s, vector<string> *s_can
     }
 }
 
+ll ans = 0;
+unordered_set<tuple<int, int, int>, hash_triplet> seen;
+
+void count_num_boxes(vector<int> numbers, int r, int g, int b, int n) {
+    
+    int num_boxes = numbers[0]*r + numbers[1]*g + numbers[2] * b;
+    if (num_boxes == n) {
+        ++ans;
+        return;
+    }
+    else if (num_boxes > n) {
+        return;
+    }
+    else {
+        // Now try another box.
+        // Try placing one in each and then backtrack?
+        if (!seen.contains({r+1, g, b})) {
+            seen.insert({r+1, g, b});
+            count_num_boxes(numbers, r+1, g, b, n);
+        }
+        if (!seen.contains({r, g+1, b})) {
+            seen.insert({r, g+1, b});
+            count_num_boxes(numbers, r, g+1, b, n);
+        }
+        if (!seen.contains({r, g, b+1})) {
+            seen.insert({r, g, b+1});
+            count_num_boxes(numbers, r, g, b+1, n);
+        }
+    }
+
+}
+
+
 void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
+
+
+  int r, g, b, n;
+  cin >> r >> g >> b >> n;
+  vector<int> numbers = {r,g,b};
+
+  count_num_boxes(numbers, 0, 0, 0, n);
+
+  cout << ans << "\n";
   
   // how many triplets (r,g,b) = n?
   // Sounds like a dp problem.
@@ -408,6 +450,9 @@ void solution() {
   // Then we simply start with n/r items.
   // If its equal then we add, else we subtract r and add one to g
   // Else if not equal we
+  // We should do a recursive function.
+
+
 }
 
 
