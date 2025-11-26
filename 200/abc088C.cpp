@@ -396,7 +396,47 @@ void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
+  
+  // All moves need to be equal,
+  // meaning that if we go to the right, then all rows
+  // must jump the same amount for a given column.
+  //
+  // Likewise if we go down, then all columns must
+  // jump the same amount for a given row.
 
+
+  vector<vector<int>> c(3, vector<int>(3, 0));
+  for (int i=0; i < 3; ++i) {
+      for (int j=0; j < 3; ++j) {
+          cin >> c[i][j];
+      }
+  }
+
+  // Check all columns
+  for (int i=0; i < 2; ++i) {
+      int old_diff = c[i+1][0] - c[i][0];
+      for (int j=1; j < 3; ++j) {
+          int diff = c[i+1][j] - c[i][j];
+          if (diff != old_diff) {
+              cout << "No\n";
+              return;
+          }
+      }
+  }
+
+  // Check all rows
+  for (int j=0; j < 2; ++j) {
+      int old_diff = c[0][j+1] - c[0][j];
+      for (int i=1; i < 3; ++i) {
+          int diff = c[i][j+1] - c[i][j];
+          if (diff != old_diff) {
+              cout << "No\n";
+              return;
+          }
+      }
+  }
+
+  cout << "Yes\n";
 }
 
 
