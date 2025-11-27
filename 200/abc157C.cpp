@@ -395,25 +395,36 @@ void solution() {
 
   vector<int> number(n, -1);
 
+  bool failed = false;
   
   for (int i =0; i < m; ++i) {
       int s, c;
       cin >> s >> c;
       // Conflicting statements
       if (number[s-1] != -1 && number[s-1] != c) {
-          cout << "-1\n";
-          return;
+          failed = true;
       }
       number[s-1] = c;
   }
 
-  if (number[0] == 0) {
+  for (int i=0; i < n; ++i) {
+      if (number[i] == -1) {
+          // Only place 0s if valid, only valid in the beginning if n==1.
+          if (i > 0 || n == 1) {
+              number[i] = 0;
+          }
+          else {
+              number[i] = 1;
+          }
+      }
+  }
+
+  if ((n > 1 && number[0] == 0) || failed) {
       cout << "-1\n";
       return;
   }
 
   for (int c : number) {
-      if (c < 0) c = -1*c;
       cout << c;
   }
   cout << "\n";
