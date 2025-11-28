@@ -376,6 +376,14 @@ void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
+  
+  // N integers, smallest is A, largest is B.
+  //
+  // How many different sums?
+  // One brute force way is to start with N-1 of A, 1 of B.
+  // But then we could have any number of integers in-between...
+  // 
+  // If it was only A and B it would be easier.
  
 }
 
@@ -384,7 +392,6 @@ int main() {
   cin.tie(NULL);
 
   int t = 1;
-  // cin >> t;
 
   while (t--)
     solution();
