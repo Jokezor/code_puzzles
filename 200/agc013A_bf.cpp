@@ -389,49 +389,55 @@ void solution() {
 
   // Least number of subarrays.
   int start = 0;
+  int i = 0;
 
-  for (int i=0; i < n; ++i) {
+  while (i < n) {
       // Also need to take care of where this one starts.
       // Take copy for non-decreasing
-      vector<ll> non_decreasing = {a.begin() + start, a.begin() + i};
-      vector<ll> non_increasing = {a.begin() + start, a.begin() + i};
+      vector<ll> non_decreasing = {a.begin() + start, a.begin() + i + 1};
+      vector<ll> non_increasing = {a.begin() + start, a.begin() + i + 1};
 
-      sort(non_decreasing.begin(), non_decreasing.end(), greater<ll>());
-      sort(non_increasing.begin(), non_increasing.end(), less<ll>());
+      // cout << "{" << start << ", " << i << "}\n";
+      // print(non_decreasing);
+
+      sort(non_decreasing.begin(), non_decreasing.end(), less<ll>());
+      sort(non_increasing.begin(), non_increasing.end(), greater<ll>());
 
       // Check if any of the vectors match a.
       bool is_non_decreasing = true;
       bool is_non_increasing = true;
 
-      for (int j=0; j < i-start; ++j) {
+      for (int j=0; j < non_decreasing.size(); ++j) {
           if (a[j + start] != non_decreasing[j]) {
               is_non_decreasing = false;
           }
           if (a[j + start] != non_increasing[j]) {
               is_non_increasing = false;
           }
+          // cout << a[j + start] << "\n";
       }
 
 
       // If not sorted, add 1 to ans.
       // Change start to i.
       if (!is_non_decreasing && !is_non_increasing) {
-          print(non_decreasing);
+          // print(non_decreasing);
           ++ans;
           start = i;
       }
+      ++i;
 
   }
   // This means that we have more than one group, need to count the last one.
   if (ans > 0) ++ans;
 
   // Do we always need to split it?
-  // ans = max(2ll, ans);
+  ans = max(2ll, ans);
 
   // Only if n==1 we cannot divide it?
-  // if (n == 1) {
-  //     ans = 0;
-  // }
+  if (n == 1) {
+      ans = 0;
+  }
 
   cout << ans << "\n";
 }
@@ -441,7 +447,7 @@ int main() {
   cin.tie(NULL);
 
   int t = 1;
-  // cin >> t;
+  cin >> t;
 
   while (t--)
     solution();
