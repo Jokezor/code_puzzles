@@ -377,6 +377,72 @@ void solution() {
   //
   // Solve it
  
+  int n, h;
+  cin >> n >> h;
+
+  vector<int> t(n);
+  vector<int> l(n);
+  vector<int> u(n);
+
+
+  for (int i=0; i < n; ++i) {
+      cin >> t[i] >> l[i] >> u[i];
+  }
+
+  // Now try to aim for the closest edge, looking 2 ahead.
+  int current = h;
+  int current_time = 0;
+
+  bool can_make_it = true;
+
+  for (int i=0; i +1 < n; ++i) {
+      // First check that we can get to the next,
+      int diff = min(abs(current - l[i]), abs(current - u[i]));
+
+      
+      // We can start by going to the closest in diff, then look at what time we have left
+      // if (abs(current-l[i]) < abs(current-u[i])) {
+      //     current = l[i];
+      // }
+      // else {
+      //     current = u[i];
+      // }
+      // current_time += diff;
+
+      // Look at the next one, which direction?
+      // We should take care to walk too far.
+      // Only walk to the closest not further.
+      if (l[i+1] > u[i]) {
+          current = min(u[i], current + (t[i] - current_time));
+      }
+      else if (u[i+1] < l[i]) {
+          current = max(l[i], current - (t[i] - current_time));
+      }
+      else {
+          current = max(l[i], current - (t[i] - current_time));
+      }
+
+      // Now let's look at where to position ourselves for the next one.
+      // Now we know we can make it for the current, but where to put ourselves?
+      // We can start by going to the closest in diff, then look at what time we have left
+      // then walk t[i] - (current_time) in that direction.
+
+      current_time = t[i];
+      // We cannot make it!
+      // abort.
+      if (!(current >= l[i] && current <= u[i])) {
+          can_make_it = false;
+          break;
+      }
+      // cout << current << "\n";
+  }
+
+  if (can_make_it) {
+      cout << "Yes\n";
+  }
+  else {
+      cout << "No\n";
+  }
 }
 
 int main() {
@@ -384,6 +450,7 @@ int main() {
   cin.tie(NULL);
 
   int t = 1;
+  cin >> t; // First time seen in an atcoder problem!
 
   while (t--)
     solution();
