@@ -376,6 +376,29 @@ void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
+
+
+  int n, m;
+  cin >> n >> m;
+
+  // Keeps count of the weight of each bird type in total
+  vector<int> bird_weights(m+1, 0);
+
+  // Keeps count of how many of each bird we have
+  vector<int> birds(m+1, 0);
+
+  for (int i=0; i < n; ++i) {
+      int bird_type, bird_weight;
+      cin >> bird_type >> bird_weight;
+
+      birds[bird_type]++;
+      bird_weights[bird_type] += bird_weight;
+  }
+
+  for (int i=1; i <= m; ++i) {
+      double avg_weight = (double)bird_weights[i]/(double)birds[i];
+      printf("%.20lf\n", avg_weight);
+  }
  
 }
 
