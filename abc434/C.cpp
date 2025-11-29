@@ -399,7 +399,8 @@ void solution() {
       // First check that we can get to the next,
       int diff = min(abs(current - l[i]), abs(current - u[i]));
 
-      
+      // First if we are already inside we could just stay in the middle?
+
       // We can start by going to the closest in diff, then look at what time we have left
       // if (abs(current-l[i]) < abs(current-u[i])) {
       //     current = l[i];
