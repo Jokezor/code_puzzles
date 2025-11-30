@@ -377,45 +377,40 @@ void solution() {
   //
   // Solve it
  
-  ll n;
+  // Simplest is to add N.
+  // Then for t, check where t can be found in s.
+  // For example,
+  //
+  // 6
+  // exparn
+  // arnest
+  //
+  // ans = 6.
+  // 
+  
+  int n;
   cin >> n;
 
-  vector<ll> a(n);
-  for (int i=0; i < n; ++i) {
-      cin >> a[i];
-  }
+  string s, t;
+  cin >> s >> t;
 
-  ll ans = 0;
-  ll old_diff = 0;
-  ll new_diff = 0;
+  int ans = n;
 
-  // Least number of subarrays.
-  for (int i=0; i + 1 < n; ++i) {
-      // Try to start a new sub array at i while its sorted.
-      new_diff = a[i+1] - a[i];
-
-      // If the wrong direction, we need to start new subarray
-      if (old_diff*new_diff < 0) {
-          ++ans;
-          old_diff = 0;
-      }
-      else {
-          if (new_diff != 0) {
-              old_diff = new_diff;
+  int i = 0;
+  while (true) {
+      // Go through all of t, for s[i:n]
+      int j=0;
+      for (; j < n-i; ++j) {
+          if (s[i+j] != t[j]) {
+              ++i;
+              break;
           }
       }
+      if (j == n-i) {
+          break;
+      }
   }
-  // This means that we have more than one group, need to count the last one.
-  if (ans > 0) ++ans;
-
-  // Do we always need to split it?
-  ans = max(2ll, ans);
-
-  // Only if n==1 we cannot divide it?
-  if (n == 1) {
-      ans = 0;
-  }
-
+  ans += i;
   cout << ans << "\n";
 }
 
@@ -424,9 +419,10 @@ int main() {
   cin.tie(NULL);
 
   int t = 1;
-  cin >> t;
+  // cin >> t;
 
   while (t--)
     solution();
   return 0;
 }
+
