@@ -380,70 +380,49 @@ void solution() {
   int n, h;
   cin >> n >> h;
 
-  vector<int> t(n);
-  vector<int> l(n);
-  vector<int> u(n);
+  vector<int> t(n+1);
+  vector<int> l(n+1);
+  vector<int> u(n+1);
 
-
-  for (int i=0; i < n; ++i) {
+  for (int i=1; i <= n; ++i) {
       cin >> t[i] >> l[i] >> u[i];
   }
 
-  // Now try to aim for the closest edge, looking 2 ahead.
-  int current = h;
-  int current_time = 0;
+  l[0] = h;
+  u[0] = h;
 
-  bool can_make_it = true;
+  // walk from the end, construct the left and right edges.
+  // make sure to trim to the range for each
+  // And if the range is within range, continue
+  // Finally, check if h is in the final range.
 
-  for (int i=0; i +1 < n; ++i) {
-      // First check that we can get to the next,
-      int diff = min(abs(current - l[i]), abs(current - u[i]));
+  pair<int, int> bounds = {l[n], u[n]};
 
-      // First if we are already inside we could just stay in the middle?
+  for (int i=n-1; i >= 0; --i) {
+      int time_diff = t[i+1] - t[i];
+      bounds.first = max(0, bounds.first - time_diff);
+      bounds.second = bounds.second + time_diff;
 
-      // We can start by going to the closest in diff, then look at what time we have left
-      // if (abs(current-l[i]) < abs(current-u[i])) {
-      //     current = l[i];
-      // }
-      // else {
-      //     current = u[i];
-      // }
-      // current_time += diff;
+      bounds.first = max(bounds.first, l[i]);
+      bounds.second = min(bounds.second, u[i]);
 
-      // Look at the next one, which direction?
-      // We should take care to walk too far.
-      // Only walk to the closest not further.
-      if (l[i+1] > u[i]) {
-          current = min(u[i], current + (t[i] - current_time));
-      }
-      else if (u[i+1] < l[i]) {
-          current = max(l[i], current - (t[i] - current_time));
-      }
-      else {
-          current = max(l[i], current - (t[i] - current_time));
+      if (bounds.first > bounds.second) {
+          cout << "No\n";
+          return;
       }
 
-      // Now let's look at where to position ourselves for the next one.
-      // Now we know we can make it for the current, but where to put ourselves?
-      // We can start by going to the closest in diff, then look at what time we have left
-      // then walk t[i] - (current_time) in that direction.
-
-      current_time = t[i];
-      // We cannot make it!
-      // abort.
-      if (!(current >= l[i] && current <= u[i])) {
-          can_make_it = false;
-          break;
-      }
-      // cout << current << "\n";
+      // cout << "{"<< bounds.first << ", " << bounds.second << "}\n";
   }
 
-  if (can_make_it) {
+  if (h >= bounds.first && h <= bounds.second) {
       cout << "Yes\n";
   }
   else {
       cout << "No\n";
   }
+  // cout << "{" << bounds.first << ", " << bounds.second << "}\n";
+
+
 }
 
 int main() {
