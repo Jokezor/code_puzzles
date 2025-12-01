@@ -372,11 +372,77 @@ bool check_inter(const pt& a, const pt& b, const pt& c, const pt& d) {
            sgn(c.cross(d, a)) != sgn(c.cross(d, b));
 }
 
+
 void solution() {
   // ScopedTimer timer{"solution"};
   //
   // Solve it
  
+  // Check how many cells are not covered by any cloud?
+  // When removing one cloud at a time. (and place back)
+  // Brute force is to add a count in each cell.
+  // (4M cells), then for each cloud we increment by one.
+  // On query, we check if the cells that this cloud covers only has 1.
+  // If so, we remove that and output the answer.
+  // potential 4M * 2* 10^5 = 800 * 10^9 = 8* 10^11 operations.
+  // Which is too slow.
+  //
+  // The same time is taken if we were to check for intersection of clouds instead?
+  // What do we need to know to determine it?
+  //
+  // Feels like we could sort and binary search somehow?
+  // Can we somehow keep track of the overlapping clouds?
+
+
+  // For that, I would need to record the overlap in a precomputation step.
+  // As in query time, checking all O(N) sets would not be possible.
+  //
+  // So an algorithm where I can add each cell (row, col) and check for its uniqueness.
+  // What if we sort all clouds first by row and then another with per column.
+  // Then I should find all those starting inside my cloud.
+  // 
+  // That would work.
+  // Basically, binary search in all 4 directions for column_start, 
+  // column_end, row_start, row_end and make sure to bound to my current cloud to not go out of bounds.
+
+  ll n;
+  cin >> n;
+
+  vector<vector<int>> clouds(n, vector<int>(4));
+
+  for (int i=0; i < n; ++i) {
+      cin >> clouds[i][0] >> clouds[i][1] >> clouds[i][2] >> clouds[i][3];
+  }
+
+  // Sorted by first
+  vector<vector<int>> row_start = clouds;
+  sort(row_start.begin(), row_start.end(), [](const vector<int>& a, const vector<int>& b) {
+      return a[0] < b[0];
+  });
+
+  vector<vector<int>> row_end = clouds;
+  sort(row_end.begin(), row_end.end(), [](const vector<int>& a, const vector<int>& b) {
+      return a[1] < b[1];
+  });
+
+  vector<vector<int>> col_start = clouds;
+  sort(col_start.begin(), col_start.end(), [](const vector<int>& a, const vector<int>& b) {
+      return a[2] < b[2];
+  });
+
+  vector<vector<int>> col_end = clouds;
+  sort(col_end.begin(), col_end.end(), [](const vector<int>& a, const vector<int>& b) {
+      return a[3] < b[3];
+  });
+
+  // Now we want to go through each cloud, binary search for rows and columns.
+  int ans = 4e6;
+
+
+  // We would need to keep copies of all of them since we can't sort them.
+  // But how can we keep them and then sort them in multiple orders?
+  // I think its better to keep a vector of vector with 4 elements.
+  // Then we basically sort it in different ways depending on the query.
 }
 
 int main() {
