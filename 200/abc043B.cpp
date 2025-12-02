@@ -377,33 +377,20 @@ void solution() {
   //
   // Solve it
 
-  // pop from a stack?
-
-  stack<char> stck;
-
   string s;
   cin >> s;
 
+  string ans;
+
   for (char c : s) {
       if (c == 'B') {
-          if (!stck.empty()) stck.pop();
+          if (ans.length() > 0) ans.pop_back();
       }
       else {
-          stck.push(c);
-          ++index;
+          ans.push_back(c);
       }
   }
-
-  vector<char> result;
-  while (!stck.empty()) {
-      result.push_back(stck.top());
-      stck.pop();
-  }
-
-  for (int i=result.size()-1; i >= 0; --i) {
-      cout << result[i];
-  }
-  cout << "\n";
+  cout << ans << "\n";
 }
 
 int main() {
